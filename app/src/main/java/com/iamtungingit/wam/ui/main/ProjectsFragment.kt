@@ -93,6 +93,7 @@ class ProjectsFragment : Fragment() {
         val nameInput = view.findViewById<TextInputEditText>(R.id.np_name)
         val idPreview = view.findViewById<TextView>(R.id.np_id_preview)
         val templateSpinner = view.findViewById<android.widget.Spinner>(R.id.np_template)
+        val jsApiSwitch = view.findViewById<com.google.android.material.materialswitch.MaterialSwitch>(R.id.np_jsapi)
         val templates = resources.getStringArray(R.array.array_templates)
         templateSpinner.adapter = android.widget.ArrayAdapter(
             requireContext(), android.R.layout.simple_spinner_dropdown_item, templates)
@@ -129,12 +130,13 @@ class ProjectsFragment : Fragment() {
         dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             if (!validate()) return@setOnClickListener
             val name = nameInput.text?.toString()?.trim().orEmpty()
+            val includeJsApi = jsApiSwitch.isChecked
             dialog.dismiss()
-            createProject(name, templateSpinner.selectedItemPosition)
+            createProject(name, templateSpinner.selectedItemPosition, includeJsApi)
         }
     }
 
-    private fun createProject(name: String, templateIndex: Int) {
+    private fun createProject(name: String, templateIndex: Int, includeJsApi: Boolean = false) {
         val safe = com.iamtungingit.wam.util.PathSanitizer.sanitizeProjectName(name)
         if (safe == null) {
             toast(R.string.name_invalid)
@@ -147,6 +149,12 @@ class ProjectsFragment : Fragment() {
                     toast(R.string.name_taken)
                 } else {
                     com.iamtungingit.wam.util.Templates.writeTemplate(dir, templateIndex)
+                    // v1.7.0 (user request): drop a ready-made api-examples.html into
+                    // the new project so the official JS API is discoverable. Online
+                    // projects are just a URL — no files to add.
+                    if (includeJsApi && templateIndex != com.iamtungingit.wam.util.Templates.TEMPLATE_ONLINE) {
+                        com.iamtungingit.wam.util.Templates.writeApiExamples(dir)
+                    }
                     toastDone(getString(R.string.project_created, safe))
                     openEditor(safe)
                 }

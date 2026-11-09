@@ -1,6 +1,7 @@
 package com.iamtungingit.wam.wap.bridge
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.net.Uri
@@ -10,6 +11,7 @@ import android.os.Looper
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import com.iamtungingit.wam.R
 import com.iamtungingit.wam.settings.AppPrefsRepository
 import com.iamtungingit.wam.wap.archive.SizeLimits
 import com.iamtungingit.wam.wap.manifest.WapManifest
@@ -48,6 +50,10 @@ class WapFeatures(
     private val networkAllowed: () -> Boolean,
     private val cameraLauncher: ActivityResultLauncher<Uri>,
     private val micPermissionLauncher: ActivityResultLauncher<String>,
+    /** POST_NOTIFICATIONS prompt (Android 13+) for WAP.notify(). */
+    private val notifyPermissionLauncher: ActivityResultLauncher<String>,
+    /** Save-as dialog (ACTION_CREATE_DOCUMENT) for WAP.storage.export(). */
+    private val exportLauncher: ActivityResultLauncher<String>,
     private val log: (String) -> Unit
 ) {
 
@@ -65,6 +71,11 @@ class WapFeatures(
     private var recFile: File? = null
     private var recCallback: ((JSONObject) -> Unit)? = null
     private val autoStop = Runnable { stopRecording() }
+
+    // ---- v1.7.0 capability state
+    private var pendingNotify: ((JSONObject) -> Unit)? = null
+    private var pendingExportName: String? = null
+    private var pendingExportCallback: ((JSONObject) -> Unit)? = null
 
     // ---------------------------------------------------------------- errors
 
@@ -433,7 +444,308 @@ class WapFeatures(
         .put("mic", prefs().mic)
         .put("tts", prefs().tts)
         .put("sendData", prefs().sendData)
+        .put("vibrate", prefs().vibrate)
+        .put("clipboard", prefs().clipboard)
+        .put("notifications", prefs().notifications)
+        .put("deviceInfo", prefs().deviceInfo)
+        .put("share", prefs().share)
+        .put("exportFiles", prefs().exportFiles)
         .put("network", if (networkAllowed()) "allowed" else "denied")
+
+    // ------------------------------------------------- v1.7.0: more API permissions
+
+    /** WAP.device.vibrate(ms) — short haptic feedback, 10–5000 ms. */
+    fun deviceVibrate(ms: Int, onResult: (JSONObject) -> Unit) {
+        if (!prefs().vibrate) {
+            log("device.vibrate blocked — Vibrate permission is off in App settings")
+            onResult(err("vibrate_disabled"))
+            return
+        }
+        mainHandler.post {
+            try {
+                val duration = ms.coerceIn(10, MAX_VIBRATE_MS).toLong()
+                val vibrateOk = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    val mgr = activity.getSystemService(android.content.Context.VIBRATOR_MANAGER_SERVICE)
+                        as? android.os.VibratorManager
+                    mgr?.defaultVibrator
+                } else {
+                    @Suppress("DEPRECATION")
+                    activity.getSystemService(android.content.Context.VIBRATOR_SERVICE) as? android.os.Vibrator
+                }?.let { v ->
+                    if (v.hasVibrator()) {
+                        v.vibrate(android.os.VibrationEffect.createOneShot(
+                            duration, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+                        true
+                    } else false
+                } ?: false
+                onResult(if (vibrateOk) JSONObject().put("ok", true).put("ms", duration)
+                         else err("no_vibrator"))
+            } catch (e: Exception) {
+                onResult(err("vibrate_failed"))
+            }
+        }
+    }
+
+    /** WAP.device.info() — model / OS / screen / language / battery. */
+    fun deviceInfo(onResult: (JSONObject) -> Unit) {
+        if (!prefs().deviceInfo) {
+            log("device.info blocked — Device info permission is off in App settings")
+            onResult(err("device_info_disabled"))
+            return
+        }
+        mainHandler.post {
+            try {
+                val dm = activity.resources.displayMetrics
+                val battery = batteryPercent()
+                val info = JSONObject()
+                    .put("model", Build.MODEL)
+                    .put("manufacturer", Build.MANUFACTURER)
+                    .put("androidVersion", Build.VERSION.RELEASE)
+                    .put("sdk", Build.VERSION.SDK_INT)
+                    .put("screenWidth", dm.widthPixels)
+                    .put("screenHeight", dm.heightPixels)
+                    .put("density", dm.density)
+                    .put("language", java.util.Locale.getDefault().toString())
+                if (battery != null) info.put("batteryPercent", battery)
+                info.put("ok", true)
+                onResult(info)
+            } catch (e: Exception) {
+                onResult(err("device_info_failed"))
+            }
+        }
+    }
+
+    /** Sticky battery broadcast — no permission needed, returns null if absent. */
+    private fun batteryPercent(): Int? {
+        return try {
+            val intent = activity.registerReceiver(null,
+                android.content.IntentFilter(android.content.Intent.ACTION_BATTERY_CHANGED)) ?: return null
+            val level = intent.getIntExtra(android.os.BatteryManager.EXTRA_LEVEL, -1)
+            val scale = intent.getIntExtra(android.os.BatteryManager.EXTRA_SCALE, 100)
+            if (level >= 0) (level * 100) / scale.coerceAtLeast(1) else null
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    /** WAP.clipboard.write(text) — copies to the system clipboard. */
+    fun clipboardWrite(text: String, onResult: (JSONObject) -> Unit) {
+        if (!prefs().clipboard) {
+            log("clipboard.write blocked — Clipboard permission is off in App settings")
+            onResult(err("clipboard_disabled"))
+            return
+        }
+        mainHandler.post {
+            try {
+                val cm = activity.getSystemService(android.content.Context.CLIPBOARD_SERVICE)
+                    as? android.content.ClipboardManager
+                if (cm == null) {
+                    onResult(err("clipboard_failed"))
+                    return@post
+                }
+                cm.setPrimaryClip(android.content.ClipData.newPlainText("WAP", text.take(MAX_CLIPBOARD)))
+                onResult(JSONObject().put("ok", true))
+            } catch (e: Exception) {
+                onResult(err("clipboard_failed"))
+            }
+        }
+    }
+
+    /** WAP.clipboard.read() — DANGEROUS: may read anything the user last copied. */
+    fun clipboardRead(onResult: (JSONObject) -> Unit) {
+        if (!prefs().clipboard) {
+            log("clipboard.read blocked — Clipboard permission is off in App settings")
+            onResult(err("clipboard_disabled"))
+            return
+        }
+        mainHandler.post {
+            try {
+                val cm = activity.getSystemService(android.content.Context.CLIPBOARD_SERVICE)
+                    as? android.content.ClipboardManager
+                val text = cm?.primaryClip?.itemCount?.let { count ->
+                    (0 until count).firstNotNullOfOrNull { cm.primaryClip?.getItemAt(it)?.text }
+                }
+                onResult(JSONObject().put("ok", true)
+                    .put("text", text?.toString()?.take(MAX_CLIPBOARD) ?: ""))
+            } catch (e: Exception) {
+                onResult(err("clipboard_failed"))
+            }
+        }
+    }
+
+    /** WAP.notify(title, body) — a normal notification on the WAM apps channel. */
+    fun notify(title: String, body: String, onResult: (JSONObject) -> Unit) {
+        if (!prefs().notifications) {
+            log("notify blocked — Notifications permission is off in App settings")
+            onResult(err("notifications_disabled"))
+            return
+        }
+        // Android 13+: POST_NOTIFICATIONS must be granted at runtime first.
+        if (Build.VERSION.SDK_INT >= 33 && !hasPermission(android.Manifest.permission.POST_NOTIFICATIONS)) {
+            pendingNotify = onResult
+            try {
+                notifyPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            } catch (e: Exception) {
+                pendingNotify = null
+                onResult(err("notify_permission_denied"))
+            }
+            return
+        }
+        postNotification(title, body, onResult)
+    }
+
+    /** Called from RuntimeActivity's notification-permission launcher. */
+    fun onNotifyPermissionResult(granted: Boolean) {
+        val cb = pendingNotify ?: return
+        pendingNotify = null
+        if (!granted) {
+            log("notify denied — POST_NOTIFICATIONS not granted")
+            cb(err("notify_permission_denied"))
+            return
+        }
+        postNotification(null, null, cb)
+    }
+
+    private fun postNotification(title: String?, body: String?, onResult: (JSONObject) -> Unit) {
+        mainHandler.post {
+            try {
+                val nm = activity.getSystemService(android.content.Context.NOTIFICATION_SERVICE)
+                    as? android.app.NotificationManager
+                if (nm == null || !nm.areNotificationsEnabled()) {
+                    onResult(err("notify_permission_denied"))
+                    return@post
+                }
+                if (Build.VERSION.SDK_INT >= 26) {
+                    val channel = android.app.NotificationChannel(
+                        NOTIFICATION_CHANNEL,
+                        activity.getString(R.string.wap_notification_channel),
+                        android.app.NotificationManager.IMPORTANCE_DEFAULT
+                    )
+                    channel.description = activity.getString(R.string.wap_notification_channel_desc)
+                    nm.createNotificationChannel(channel)
+                }
+                val b = androidx.core.app.NotificationCompat.Builder(activity, NOTIFICATION_CHANNEL)
+                    .setSmallIcon(R.drawable.ic_globe)
+                    .setContentTitle((title ?: activity.getString(R.string.app_name)).take(120))
+                    .setContentText((body ?: "").take(400))
+                    .setStyle(androidx.core.app.NotificationCompat.BigTextStyle()
+                        .bigText((body ?: "").take(2000)))
+                    .setAutoCancel(true)
+                nm.notify(wapId.hashCode(), b.build())
+                onResult(JSONObject().put("ok", true))
+            } catch (e: Exception) {
+                onResult(err("notify_failed"))
+            }
+        }
+    }
+
+    /** WAP.share.text(text) — the system share sheet, user picks the target. */
+    fun shareText(text: String, onResult: (JSONObject) -> Unit) {
+        if (!prefs().share) {
+            log("share.text blocked — Share permission is off in App settings")
+            onResult(err("share_disabled"))
+            return
+        }
+        mainHandler.post {
+            try {
+                val send = Intent(Intent.ACTION_SEND)
+                    .setType("text/plain")
+                    .putExtra(Intent.EXTRA_TEXT, text.take(MAX_SHARE_TEXT))
+                activity.startActivity(Intent.createChooser(send,
+                    activity.getString(R.string.action_share)))
+                onResult(JSONObject().put("ok", true))
+            } catch (e: Exception) {
+                onResult(err("share_failed"))
+            }
+        }
+    }
+
+    /** WAP.share.file(name) — shares a saved data file via the share sheet. */
+    fun shareFile(name: String, onResult: (JSONObject) -> Unit) {
+        if (!prefs().share) {
+            log("share.file blocked — Share permission is off in App settings")
+            onResult(err("share_disabled"))
+            return
+        }
+        val bytes = dataStore?.readBinary(name)
+        if (bytes == null) {
+            onResult(err("not_found"))
+            return
+        }
+        mainHandler.post {
+            try {
+                val dir = File(activity.cacheDir, "share").apply { mkdirs() }
+                val safe = name.substringAfterLast('/')
+                    .filter { it.isLetterOrDigit() || it in "._- " }.ifEmpty { "file" }
+                val f = File(dir, safe)
+                f.writeBytes(bytes)
+                val uri = FileProvider.getUriForFile(activity, "${activity.packageName}.fileprovider", f)
+                val send = Intent(Intent.ACTION_SEND)
+                    .setType(com.iamtungingit.wam.util.MimeTypes.fromPath(safe))
+                    .putExtra(Intent.EXTRA_STREAM, uri)
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                activity.startActivity(Intent.createChooser(send,
+                    activity.getString(R.string.action_share)))
+                onResult(JSONObject().put("ok", true))
+            } catch (e: Exception) {
+                onResult(err("share_failed"))
+            }
+        }
+    }
+
+    /** WAP.storage.export(name) — Save-as dialog; the user picks the destination. */
+    fun exportFile(name: String, onResult: (JSONObject) -> Unit) {
+        if (!prefs().exportFiles) {
+            log("storage.export blocked — Export files permission is off in App settings")
+            onResult(err("export_disabled"))
+            return
+        }
+        val exists = dataStore?.list()?.contains(name) ?: false
+        if (!exists) {
+            onResult(err("not_found"))
+            return
+        }
+        val safe = name.substringAfterLast('/').ifEmpty { "file" }
+        pendingExportName = safe
+        pendingExportCallback = onResult
+        try {
+            exportLauncher.launch(safe)
+        } catch (e: Exception) {
+            pendingExportName = null
+            pendingExportCallback = null
+            onResult(err("export_failed"))
+        }
+    }
+
+    /** Called from RuntimeActivity's CreateDocument launcher. */
+    fun onExportResult(uri: android.net.Uri?) {
+        val cb = pendingExportCallback
+        val name = pendingExportName
+        pendingExportCallback = null
+        pendingExportName = null
+        if (cb == null) return
+        if (uri == null || name == null) {
+            cb(err("export_cancelled"))
+            return
+        }
+        val bytes = dataStore?.readBinary(name)
+        if (bytes == null) {
+            cb(err("not_found"))
+            return
+        }
+        // Copy off the main thread — files can be up to the data quota.
+        netExecutor.execute {
+            val ok = try {
+                activity.contentResolver.openOutputStream(uri)?.use { it.write(bytes) } != null
+            } catch (e: Exception) {
+                false
+            }
+            mainHandler.post {
+                if (ok) cb(JSONObject().put("ok", true).put("name", name))
+                else cb(err("export_failed"))
+            }
+        }
+    }
 
     // ---------------------------------------------------------------- teardown
 
@@ -455,6 +767,11 @@ class WapFeatures(
         cameraPending = null
         micPending?.onResult?.invoke(err("shutdown"))
         micPending = null
+        pendingNotify?.invoke(err("shutdown"))
+        pendingNotify = null
+        pendingExportCallback?.invoke(err("shutdown"))
+        pendingExportCallback = null
+        pendingExportName = null
         photoFile?.delete()
         photoFile = null
         recFile?.delete()
@@ -470,6 +787,11 @@ class WapFeatures(
         const val MAX_RECORD_SECONDS = 30
         const val MAX_SEND_BODY = 2 * 1024 * 1024
         const val MAX_RESPONSE_BYTES = 512 * 1024
+        // v1.7.0 capability limits.
+        const val MAX_VIBRATE_MS = 5_000
+        const val MAX_CLIPBOARD = 100_000
+        const val MAX_SHARE_TEXT = 100_000
+        const val NOTIFICATION_CHANNEL = "wap_apps"
         private val ALLOWED_METHODS = setOf("POST", "PUT", "PATCH")
         private val FORBIDDEN_HEADERS = setOf("host", "content-length", "connection")
     }

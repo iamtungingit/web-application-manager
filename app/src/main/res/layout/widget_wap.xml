@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Problem 1 (user): "make the widgets hold 1 app space and stop with that tall
-     crap" — the widget renders as ONE app icon (adaptive-icon look, drawn at the
-     density-scaled cell size by WidgetRenderer). No label/subtitle stack below the
-     icon anymore: one widget = one app, occupying a single launcher app space.
-     The root stays transparent so the launcher cell padding shows through. -->
+<!-- v1.7.0 (user: "fix widgets looks, make it look like an app"): the widget now
+     renders exactly like a normal launcher shortcut — a colored adaptive-icon
+     tile with the app's icon on it and the app's name as a small label BELOW the
+     icon. Still ONE app space (1x1, resizeMode=none): the label is a single
+     compact line, not the tall text stack of older versions.
+     The root keeps the density-scaled full-cell background bitmap; the icon and
+     label sit on top (drawn by WidgetRenderer). -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_root"
     android:layout_width="match_parent"
@@ -16,11 +18,39 @@
         android:importantForAccessibility="no"
         android:scaleType="fitXY" />
 
-    <ImageView
-        android:id="@+id/widget_icon"
+    <LinearLayout
+        android:id="@+id/widget_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:importantForAccessibility="no"
-        android:scaleType="fitCenter" />
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="3dp">
+
+        <ImageView
+            android:id="@+id/widget_icon"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter" />
+
+        <!-- The app-name label is what makes it read as "an app" on the home
+             screen. Shadow keeps it legible on light tile colors. -->
+        <TextView
+            android:id="@+id/widget_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="12sp"
+            android:textColor="#FFFFFF"
+            android:shadowColor="#66000000"
+            android:shadowRadius="4"
+            android:shadowDy="1"
+            android:importantForAccessibility="no" />
+    </LinearLayout>
 </FrameLayout>

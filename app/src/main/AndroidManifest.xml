@@ -10,6 +10,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- v1.7.0 more API permissions: WAP.device.vibrate (VIBRATE) and WAP.notify
+         (POST_NOTIFICATIONS, Android 13+ runtime prompt). Both stay runtime-gated
+         per WAP inside WAM — an app only reaches them when the user enables the
+         toggle in Apps → long-press → App settings. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-feature android:name="android.hardware.microphone" android:required="false" />

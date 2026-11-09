@@ -10,6 +10,47 @@ Firefox) through its localhost preview server. No separate APK per web app.
 - **Online WAP** — just a manifest (plus optional icon) that opens an https URL under a
   user-controlled network policy.
 
+## What's new in v1.7.0 — more API permissions, app-look widgets, JS API examples
+
+- **More API permissions (the big one).** Six new per-app capabilities, each with its
+  own toggle in Apps → long-press → App settings (all OFF by default) and bridge APIs:
+  - `WAP.device.vibrate(ms)` — haptic feedback, 10–5000 ms (*Vibrate* toggle).
+  - `WAP.device.info()` — model / Android version / screen / language / battery
+    (*Device info* toggle).
+  - `WAP.clipboard.read()` / `write()` — **dangerous** (red asterisk + confirm dialog):
+    with it on an app can read whatever you last copied.
+  - `WAP.notify(title, body)` — normal Android notifications on a dedicated channel;
+    Android 13+ shows the system prompt on first use (*Notifications* toggle).
+  - `WAP.share.text()` / `share.file(name)` — opens the Android share sheet; you always
+    pick the target (*Share* toggle).
+  - `WAP.storage.export(name)` — a “Save to…” dialog that copies a saved data file
+    anywhere on the device (*Export files* toggle).
+- **JS API examples on every new project.** The New-project dialog has an
+  *“Include JS API examples”* switch (default ON) that drops a ready-made
+  `api-examples.html` into the project — working buttons for every `WAP.*` call and a
+  live status log, so the API is discoverable in ten seconds.
+- **Widgets look like real apps now.** The widget renders as a colored adaptive-icon
+  tile + the app icon + the app name as a small label below (like every launcher
+  shortcut) while staying exactly 1 app space (1×1, not resizable).
+- **Widget setup popup fixed.** A live preview at the top shows the exact widget the
+  launcher will draw (updates as you change app/shape/colors); clean label-above-control
+  rows; a color swatch next to each color button; no more invisible-label hacks.
+- **Manifest (install) popup fixed.** The cramped 120dp two-column form is replaced with
+  clean label-above-value rows that wrap properly on narrow phones; version + type and
+  entry + network sit side by side; warnings moved into a tinted red block.
+- **Icons are XML vector drawables again.** The v1.6.0 144px PNGs rendered too big in
+  `wrap_content` ImageViews and menus on high-density screens (and too soft when
+  downscaled). All 37 icons are now 24dp vectors — always sharp, always the right size,
+  tiny APK impact. The launcher foreground is a 108dp adaptive vector again.
+- **Better GitHub Actions workflow.** Unit tests run before packaging (fail fast), APKs
+  are renamed `WebApplicationManager-<version>-<abi>.apk` with the version read from
+  `build.gradle.kts`, a SHA-256 checksums file is attached to the release, plus
+  concurrency cancellation, a timeout and a build summary.
+- **Docs that earn their place.** The in-app guide gained sections for every new API;
+  Settings → Official JS API summary lists the full surface; this README's API list is
+  the single source of truth. No extra doc files.
+- Version 1.7.0 (versionCode 9).
+
 ## What's new in v1.6.0 — official JS API, cleaner widgets, smarter navigation
 
 - **Official JS API (`window.WAP`).** Apps with the data bridge enabled can now call the

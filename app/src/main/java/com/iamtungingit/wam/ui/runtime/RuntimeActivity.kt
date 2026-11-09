@@ -104,6 +104,17 @@ class RuntimeActivity : AppCompatActivity() {
             features?.onMicPermissionResult(granted)
         }
 
+    // ---- v1.7.0: more API permissions (WAP.notify / WAP.storage.export)
+    private val apiNotifyPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            features?.onNotifyPermissionResult(granted)
+        }
+
+    private val apiExportLauncher =
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/octet-stream")) { uri ->
+            features?.onExportResult(uri)
+        }
+
     // ---- Browser engine (user request: "use chromium or firefox instead of webview")
     // Default engine: the project is served over 127.0.0.1 by LocalPreviewServer and
     // opened in the device's REAL browser (Chrome = Chromium, or Firefox). The in-app
@@ -459,6 +470,8 @@ class RuntimeActivity : AppCompatActivity() {
                     networkAllowed = { networkAllowed },
                     cameraLauncher = apiCameraLauncher,
                     micPermissionLauncher = apiMicPermissionLauncher,
+                    notifyPermissionLauncher = apiNotifyPermissionLauncher,
+                    exportLauncher = apiExportLauncher,
                     log = { line -> addConsoleLine("API", line) }
                 )
                 val host = BridgeHost(

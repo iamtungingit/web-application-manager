@@ -43,6 +43,16 @@
     <Spinner
         android:id="@+id/np_template"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginBottom="8dp" />
+        android:layout_height="48dp" />
+
+    <!-- v1.7.0 (user: "jsapi examples on new project"): writes a ready-made
+         api-examples.html demoing every WAP.* call alongside the starter files. -->
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/np_jsapi"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="8dp"
+        android:checked="true"
+        android:text="@string/np_include_jsapi" />
 </LinearLayout>

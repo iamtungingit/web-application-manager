@@ -272,10 +272,11 @@
     <string name="wc_fullscreen">Fullscreen</string>
     <string name="wc_bg">Background color</string>
     <string name="wc_text">Text color</string>
+    <string name="wc_pick_color">Pick</string>
     <string name="wc_save">Save widget</string>
     <string name="wc_pick_app">Select an app…</string>
     <string name="wc_no_apps">No apps installed yet.</string>
-    <string name="wc_density_info">Screen density: %1$s (%2$d dpi · %3$s) — the widget background is drawn at the full launcher-cell size in real pixels, so it fills its cell identically on mdpi, hdpi, xhdpi, xxhdpi and xxxhdpi devices.</string>
+    <string name="wc_density_info">Screen density: %1$s (%2$d dpi · %3$s) — the widget is drawn at the full launcher-cell size in real pixels, so it looks identical on every phone.</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
@@ -370,9 +371,31 @@
     <string name="app_perm_internet">Internet</string>
     <string name="app_perm_internet_desc">Network access policy for this app (same setting as Info → Needs internet).</string>
 
-    <!-- Official JS API (v1.6.0 user request #3) -->
+    <!-- More API permissions (v1.7.0 "add more api permissions") -->
+    <string name="app_perm_vibrate">Vibrate</string>
+    <string name="app_perm_vibrate_desc">Allow the app to buzz the phone for haptic feedback (WAP.device.vibrate, 10–5000 ms).</string>
+    <string name="app_perm_notifications">Notifications</string>
+    <string name="app_perm_notifications_desc">Allow the app to post notifications (WAP.notify). Android shows its own “allow notifications” prompt on first use.</string>
+    <string name="app_perm_clipboard">Clipboard *</string>
+    <string name="app_perm_clipboard_desc">Allow the app to read and copy the clipboard (WAP.clipboard.read / WAP.clipboard.write).</string>
+    <string name="app_perm_clipboard_toggle">Allow clipboard access</string>
+    <string name="app_perm_clipboard_warning">* Dangerous: with this on, the app can read whatever you last copied — passwords, messages, addresses.</string>
+    <string name="app_perm_clipboard_confirm_title">Allow clipboard access?</string>
+    <string name="app_perm_clipboard_confirm_msg">This is a dangerous permission: the app will be able to read anything you copy on this phone (including passwords). Only allow it for apps you trust.</string>
+    <string name="app_perm_device">Device info</string>
+    <string name="app_perm_device_desc">Allow the app to read basic device facts (WAP.device.info): model, Android version, screen size, language and battery level.</string>
+    <string name="app_perm_share">Share</string>
+    <string name="app_perm_share_desc">Allow the app to open the Android share sheet (WAP.share.text / WAP.share.file). You always pick the target — nothing is sent silently.</string>
+    <string name="app_perm_export">Export files</string>
+    <string name="app_perm_export_desc">Allow the app to save its data files to device storage (WAP.storage.export). A “Save to…” dialog opens and you pick the location.</string>
+
+    <!-- Notification channel used by WAP.notify (v1.7.0) -->
+    <string name="wap_notification_channel">WAM apps</string>
+    <string name="wap_notification_channel_desc">Notifications posted by apps installed in Web Application Manager</string>
+
+    <!-- Official JS API (v1.6.0 user request #3, extended v1.7.0) -->
     <string name="sec_js_api">Official JS API</string>
-    <string name="set_js_api_summary">Apps with the data bridge enabled (manifest) can call window.WAP from JavaScript: WAP.camera.capture(), WAP.mic.record(), WAP.net.send(), WAP.tts.speak(), WAP.data.*, WAP.permissions.get(). Every call is gated by that app\'s toggles in App settings.</string>
+    <string name="set_js_api_summary">Apps with the data bridge enabled (manifest) can call window.WAP from JavaScript: WAP.camera.capture(), WAP.mic.record(), WAP.net.send(), WAP.tts.speak(), WAP.data.*, WAP.device.vibrate/info(), WAP.clipboard.read/write(), WAP.notify(), WAP.share.text/file(), WAP.storage.export(), WAP.permissions.get(). Every call is gated by that app\'s toggles in App settings.</string>
     <string name="set_open_js_api">JS API reference…</string>
 
     <!-- Permission examples (v1.6.0 user request #4) -->
@@ -383,7 +406,7 @@
     <string name="preset_offline_game">Offline game</string>
     <string name="preset_full_access">Full access *</string>
     <string name="app_preset_applied">Permission example applied</string>
-    <string name="preset_full_confirm_msg">This applies ALL permissions, including the dangerous "requests to send data" — the app could upload photos or app data to a server. Apply?</string>
+    <string name="preset_full_confirm_msg">This applies ALL permissions, including the dangerous “requests to send data” and “clipboard” — the app could upload photos or read what you copy. Apply?</string>
 
     <!-- File manager extras (v1.6.0 user request #9: more controls) -->
     <string name="action_sort">Sort</string>
@@ -404,20 +427,31 @@
         <item>WAP.camera — take a photo</item>
         <item>WAP.mic — record your voice</item>
         <item>WAP.net.send — send data to a server (dangerous)</item>
+        <item>WAP.device — vibrate &amp; device info</item>
+        <item>WAP.clipboard — copy &amp; paste (dangerous)</item>
+        <item>WAP.notify — notifications</item>
+        <item>WAP.share &amp; WAP.storage.export</item>
         <item>WAP.permissions — what may this app do?</item>
         <item>Permission examples</item>
         <item>Troubleshooting</item>
     </string-array>
     <string-array name="guide_bodies">
-        <item>1) Projects tab → New project → edit files → Preview → Package &amp; install. 2) Apps tab → Import WAP to install a .wap file. Apps run in WAM\'s built-in browser. Every capability an app uses (camera, microphone, speech, sending data) is OFF until you allow it in Apps → long-press → App settings.</item>
-        <item>Apps whose manifest has "Enable data bridge" get a global object WAP. All methods return Promises and are gated by the app\'s permission toggles — a denied call rejects with a clear error (e.g. "camera_disabled"). Reference sections below show every method. Tip: call WAP.permissions.get() first and adapt the UI to what is allowed.</item>
-        <item>WAP.data.list() → names of saved files. WAP.data.writeText(name, text) / readText(name) / delete(name). WAP.data.writeJson(name, obj) / readJson(name). WAP.data.usage() → {bytes, files, quota}. Files persist between runs; Settings → Apps → Clear data wipes them. Example: await WAP.data.writeJson("highscore", {points: 42});</item>
+        <item>1) Projects tab → New project (tick “Include JS API examples” for a ready demo page) → edit files → Preview → Package &amp; install. 2) Apps tab → Import WAP to install a .wap file. Apps run in WAM\'s built-in browser. Every capability an app uses is OFF until you allow it in Apps → long-press → App settings.</item>
+        <item>Apps whose manifest has “Enable data bridge” get a global object WAP. All methods return Promises and are gated by the app\'s permission toggles — a denied call rejects with a clear error (e.g. “camera_disabled”). Tip: call WAP.permissions.get() first and adapt the UI to what is allowed. New projects can include api-examples.html — a working demo of every call below.</item>
+        <item>WAP.data.list() → names of saved files. WAP.data.writeText(name, text) / readText(name) / delete(name). WAP.data.writeJson(name, obj) / readJson(name). WAP.data.usage() → {bytes, files, quota}. Files persist between runs; App settings → Clear data wipes them. Example: await WAP.data.writeJson("highscore", {points: 42});</item>
         <item>WAP.tts.speak("Hello!") speaks a text (up to 4000 chars); WAP.tts.stop() stops. Requires the Text-to-speech toggle. Example: button.onclick = async () => { await WAP.tts.speak("Ready player one"); };</item>
-        <item>WAP.camera.capture() opens the device camera app and saves a downscaled photo (max 1280 px JPEG) in the app\'s data. Resolves {name, bytes, url?}: for offline apps url is a ready-to-use relative path ("/.wam/cam-….jpg") you can put straight into an img src; otherwise read it back with WAP.data.readDataUrl(name) (≤ 1 MB). Requires the Camera toggle. Example: const photo = await WAP.camera.capture();</item>
-        <item>WAP.mic.record({seconds}) records microphone audio (AAC .m4a, 1–30 s, default 10) and resolves {name, bytes, url?} exactly like the camera; WAP.mic.stop() stops early. Android\'s "allow microphone" prompt appears at first use. Requires the Voice recorder toggle.</item>
-        <item>WAP.net.send(url, {method:"POST", headers:{…}, body:"…", base64:false}) sends data to a server and resolves {status, ok, contentType, body, base64}. Methods: POST/PUT/PATCH. https only (http is allowed just for localhost). This is the DANGEROUS "requests to send data" permission (red asterisk): with it ON the app can upload personal info like photos to a server; OFF it always rejects with "send_data_disabled".</item>
-        <item>WAP.permissions.get() resolves {camera, mic, tts, sendData, network} — the current grants for THIS app. Use it to show/hide features: const p = await WAP.permissions.get(); if (!p.camera) hideShotButton();</item>
-        <item>In Apps → long-press → App settings, the Examples row applies realistic presets: Camera app (camera only), Voice recorder (mic only), Story reader (text-to-speech), Offline game (nothing), Full access * (everything — asks extra confirmation because it includes the dangerous send-data permission).</item>
-        <item>Black screen: WAM now shows a real error screen with the address and a console log instead, and auto-recovers a GPU black frame with software rendering; you can also switch Settings → Preview engine to "Open in device browser". Packaging failed: the dialog shows the full error — usually the manifest entry does not match a file in the archive. Widgets: fixed 1×1 app icons; remove and re-add if one was placed with an old version.</item>
+        <item>WAP.camera.capture() opens the device camera app and saves a downscaled photo (max 1280 px JPEG) in the app\'s data. Resolves {name, bytes, url?}: for offline apps url is a ready-to-use relative path ("/.wam/cam-….jpg") you can put straight into an img src; otherwise read it back with WAP.data.readDataUrl(name) (≤ 1 MB). Requires the Camera toggle.</item>
+        <item>WAP.mic.record({seconds}) records microphone audio (AAC .m4a, 1–30 s, default 10) and resolves {name, bytes, url?} exactly like the camera; WAP.mic.stop() stops early. Android\'s “allow microphone” prompt appears at first use. Requires the Voice recorder toggle.</item>
+        <item>WAP.net.send(url, {method:"POST", headers:{…}, body:"…", base64:false}) sends data to a server and resolves {status, ok, contentType, body, base64}. Methods: POST/PUT/PATCH. https only (http just for localhost). This is the DANGEROUS “requests to send data” permission (red asterisk): with it ON the app can upload personal info like photos to a server; OFF it always rejects with “send_data_disabled”.</item>
+        <item>WAP.device.vibrate(200) buzzes the phone (10–5000 ms) — needs the Vibrate toggle. WAP.device.info() resolves {model, manufacturer, androidVersion, sdk, screenWidth, screenHeight, density, language, batteryPercent} — needs the Device info toggle. Great for “tap to buzz” feedback and small screen-aware layouts.</item>
+        <item>WAP.clipboard.write("copied!") copies a text; WAP.clipboard.read() resolves {text} with whatever the user last copied. This is a DANGEROUS permission (red asterisk, confirm dialog): with it on the app can read anything you copy, so only enable it for apps you trust. Android 13+ also shows a system “app pasted from your clipboard” notice.</item>
+        <item>WAP.notify("Title", "Body") posts a normal Android notification on the “WAM apps” channel (WAP.notify() alone shows just the app name). Needs the Notifications toggle; Android 13+ asks “allow notifications” on first use. Use for timers, downloads or reminders in your app.</item>
+        <item>WAP.share.text("look at this") opens the Android share sheet; WAP.share.file(name) shares a saved data file (any app on the phone can receive it — nothing is sent silently, you pick the target). WAP.storage.export(name) opens a “Save to…” dialog that copies a saved data file anywhere on the device. Needs the Share / Export files toggles.</item>
+        <item>WAP.permissions.get() resolves {camera, mic, tts, sendData, vibrate, clipboard, notifications, deviceInfo, share, exportFiles, network} — the current grants for THIS app. Use it to show/hide features: const p = await WAP.permissions.get(); if (!p.camera) hideShotButton();</item>
+        <item>In Apps → long-press → App settings, the Examples row applies realistic presets: Camera app (camera only), Voice recorder (mic only), Story reader (text-to-speech), Offline game (nothing) and Full access * (everything — asks extra confirmation because it includes the dangerous send-data and clipboard permissions).</item>
+        <item>Black screen: WAM shows a real error screen with the address and a console log, and auto-recovers a GPU black frame with software rendering; you can also switch Settings → Preview engine to “Open in device browser”. Packaging failed: the dialog shows the full error — usually the manifest entry does not match a file in the archive. Widgets: 1×1 app-icon shortcuts with the app name; remove and re-add if one was placed with an old version.</item>
     </string-array>
+
+    <!-- New-project dialog (v1.7.0: JS API examples on new project) -->
+    <string name="np_include_jsapi">Include JS API examples (api-examples.html)</string>
 </resources>

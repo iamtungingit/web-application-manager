@@ -22,9 +22,11 @@ import kotlin.math.roundToInt
  * launcher surface only; backgrounds are pre-scaled bitmaps (spec §3.7).
  *
  * Problem 1 (user): "make the widgets hold 1 app space and stop with that tall
- * crap" — a widget is now exactly ONE app icon: the label/subtitle stack under the
- * icon is gone (it made every widget look like a tall blob instead of an app
- * shortcut) and the widget is fixed at 1×1 (wap_widget_info resizeMode=none).
+ * crap" — a widget is exactly ONE app: fixed 1×1 (wap_widget_info resizeMode=none).
+ * v1.7.0 (user: "fix widgets looks, make it look like an app"): the widget renders
+ * like a normal launcher shortcut — colored adaptive-icon tile + the app icon + a
+ * SMALL app-name label below (single compact line, shadowed for legibility; the
+ * tall two-line blob of earlier versions is still gone).
  *
  * Sizing (user issue: "fix widgets based on DPI"): the launcher reports the
  * widget's cell in **dp** (OPTION_APPWIDGET_*_WIDTH/HEIGHT). We convert those dp
@@ -59,7 +61,8 @@ object WidgetRenderer {
                     shape = "rounded",
                     bg = context.getColor(R.color.widget_default_bg),
                     pendingIntent = configurePendingIntent(context, appWidgetId),
-                    statusLabel = context.getString(R.string.widget_setup_hint)
+                    label = context.getString(R.string.widget_setup_hint),
+                    labelColor = 0xFFFFFFFF.toInt()
                 )
             }
             registry.get(record.wapId) == null -> {
@@ -75,7 +78,8 @@ object WidgetRenderer {
                             .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
                         PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                     ),
-                    statusLabel = context.getString(R.string.widget_app_removed)
+                    label = context.getString(R.string.widget_app_removed),
+                    labelColor = record.textColor ?: 0xFFFFFFFF.toInt()
                 )
             }
             else -> renderNormal(context, rv, manager, appWidgetId, record, registry)
@@ -119,9 +123,10 @@ object WidgetRenderer {
         else -> "xxxhdpi"
     }
 
-    /** One app icon: full-cell background + the icon inside the adaptive safe zone.
-     *  [statusLabel] ("Tap to set up" / "App removed") is drawn into the background
-     *  bitmap and the icon shrinks a little — normal widgets stay label-free. */
+    /** One app: full-cell tile + icon in the adaptive safe zone + a small app-name
+     *  label under it (v1.7.0: "make it look like an app" — the label lives in the
+     *  layout now, single line, never the tall text stack). The icon shrinks a bit
+     *  when a label shares the cell so nothing is cropped. */
     private fun renderIconState(
         context: Context,
         rv: RemoteViews,
@@ -131,7 +136,8 @@ object WidgetRenderer {
         shape: String,
         bg: Int,
         pendingIntent: PendingIntent,
-        statusLabel: String? = null
+        label: String? = null,
+        labelColor: Int = 0xFFFFFFFF.toInt()
     ) {
         rv.setInt(R.id.widget_root, "setBackgroundColor", 0x00000000)
         val cell = cellPxFor(context, manager, appWidgetId)
@@ -146,12 +152,13 @@ object WidgetRenderer {
         // scales it 1:1, so the widget fills the cell edge-to-edge on every density.
         rv.setImageViewBitmap(
             R.id.widget_bg,
-            IconCache.widgetBackground(shape, bg, cell.width, cell.height, statusLabel)
+            IconCache.widgetBackground(shape, bg, cell.width, cell.height)
         )
 
-        // Icon content: adaptive safe zone of the SHORTER cell side (icon look);
-        // slightly smaller when a status label shares the cell.
-        val zone = if (statusLabel != null) SAFE_ZONE_RATIO * 0.66f else SAFE_ZONE_RATIO
+        // Icon content: adaptive safe zone of the SHORTER cell side; slightly
+        // smaller when the label shares the cell (≈20% of the height).
+        val hasLabel = !label.isNullOrEmpty()
+        val zone = if (hasLabel) SAFE_ZONE_RATIO * 0.85f else SAFE_ZONE_RATIO
         val contentPx = (minOf(cell.width, cell.height) * zone).roundToInt().coerceAtLeast(24)
         val scaled = icon?.let { fitSquare(it, contentPx) }
         if (scaled != null) {
@@ -159,6 +166,16 @@ object WidgetRenderer {
             rv.setViewVisibility(R.id.widget_icon, android.view.View.VISIBLE)
         } else {
             rv.setViewVisibility(R.id.widget_icon, android.view.View.GONE)
+        }
+
+        // The app-name label (launcher-shortcut look). Single line, ellipsized;
+        // textColor follows the user-picked widget text color.
+        if (hasLabel) {
+            rv.setTextViewText(R.id.widget_label, label)
+            rv.setTextColor(R.id.widget_label, labelColor)
+            rv.setViewVisibility(R.id.widget_label, android.view.View.VISIBLE)
+        } else {
+            rv.setViewVisibility(R.id.widget_label, android.view.View.GONE)
         }
         rv.setOnClickPendingIntent(R.id.widget_root, pendingIntent)
     }
@@ -169,17 +186,22 @@ object WidgetRenderer {
         manager: AppWidgetManager,
         appWidgetId: Int,
         record: WidgetRecord,
-        @Suppress("UNUSED_PARAMETER") registry: Registry
+        registry: Registry
     ) {
         val bg = record.backgroundColor ?: context.getColor(R.color.widget_default_bg)
         val icon = IconCache.loadBitmap(context, record.wapId)
             ?: IconCache.defaultIconBitmap(context, 96)
+        // The label under the icon is the app's name — that is what makes the
+        // widget read as "an app" (v1.7.0 user request).
+        val name = registry.get(record.wapId)?.name ?: record.label.ifEmpty { "" }
         renderIconState(
             context, rv, manager, appWidgetId,
             icon = icon,
             shape = record.shape,
             bg = bg,
-            pendingIntent = launchPendingIntent(context, record)
+            pendingIntent = launchPendingIntent(context, record),
+            label = name,
+            labelColor = record.textColor ?: 0xFFFFFFFF.toInt()
         )
     }
 

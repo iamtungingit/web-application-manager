@@ -80,18 +80,10 @@ object IconCache {
      * the whole cell; the visible corner radius follows the adaptive-icon look
      * (≈ 1/4.5 of the SHORTER side), so a resized widget keeps icon-like corners.
      *
-     * [label] (optional): a short status text ("Tap to set up" / "App removed") is
-     * drawn INTO the bitmap near the bottom — the layout itself stays icon-only so
-     * normal widgets never grow a text stack again (user problem 1).
+     * v1.7.0: the app-name label moved into the layout (widget_label TextView,
+     * "make it look like an app") — this now draws only the shape/color tile.
      */
-    fun widgetBackground(
-        shape: String,
-        color: Int,
-        widthPx: Int,
-        heightPx: Int,
-        label: String? = null,
-        textColor: Int = 0xFFFFFFFF.toInt()
-    ): Bitmap {
+    fun widgetBackground(shape: String, color: Int, widthPx: Int, heightPx: Int): Bitmap {
         val w = widthPx.coerceIn(32, 2048)
         val h = heightPx.coerceIn(32, 2048)
         val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
@@ -105,16 +97,6 @@ object IconCache {
                 val r = minOf(w, h) * 0.225f
                 canvas.drawRoundRect(rect, r, r, paint)
             }
-        }
-        if (!label.isNullOrEmpty()) {
-            val tp = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                this.color = textColor
-                textSize = (h * 0.11f).coerceIn(24f, 96f)
-                textAlign = Paint.Align.CENTER
-            }
-            val x = w / 2f
-            val y = h - (h * 0.14f)
-            canvas.drawText(label, x, y, tp)
         }
         return bmp
     }

@@ -52,6 +52,16 @@ object Templates {
         File(dir, "manifest.json").writeText(manifestJson(projectName, "offline", entry))
     }
 
+    /**
+     * v1.7.0 (user: "jsapi examples on new project"): writes a self-contained
+     * api-examples.html that demonstrates every official WAP.* call with working
+     * buttons and a status log. Called when the "Include JS API examples" switch
+     * in the New-project dialog is on (default ON) for offline templates.
+     */
+    fun writeApiExamples(dir: File) {
+        File(dir, "api-examples.html").writeText(API_EXAMPLES_HTML)
+    }
+
     // ---- Create-dialog templates (v1.5.0 user request: starter content for the
     // single Create button: html / css / js exactly as specified). ----
 
@@ -115,6 +125,87 @@ body {
 
     private val CREATE_JS = """// Runs when the JavaScript file loads
 console.log("App is running!");
+"""
+
+    /** v1.7.0: the ready-made JS API demo written into new projects. */
+    private val API_EXAMPLES_HTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WAP API examples</title>
+<style>
+  body { margin:0; padding:16px; background:#f4f7f4; color:#1c2b1e;
+         font-family:system-ui,sans-serif; }
+  h1 { font-size:1.2rem; margin:0 0 4px; }
+  p.tip { font-size:.8rem; opacity:.7; margin:0 0 12px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  button { padding:12px 8px; border:0; border-radius:12px; font-size:.85rem;
+           background:#2e7d32; color:#fff; }
+  button.gray { background:#546e7a; }
+  pre { background:#10240f; color:#c8e6c9; padding:12px; border-radius:12px;
+        font-size:.72rem; min-height:120px; overflow:auto; white-space:pre-wrap; }
+</style>
+</head>
+<body>
+<h1>WAP API examples</h1>
+<p class="tip">Every call below is gated: enable the matching toggle in
+Apps &rarr; long-press &rarr; App settings, or the call rejects with an error.</p>
+<div class="grid">
+  <button onclick="perms()">WAP.permissions.get()</button>
+  <button onclick="save()">WAP.data.writeText()</button>
+  <button onclick="load()">WAP.data.readText()</button>
+  <button onclick="info()">WAP.device.info()</button>
+  <button onclick="vibrate()">WAP.device.vibrate()</button>
+  <button onclick="clipCopy()">WAP.clipboard.write()</button>
+  <button onclick="clipRead()">WAP.clipboard.read() *</button>
+  <button onclick="notify()">WAP.notify()</button>
+  <button onclick="speak()">WAP.tts.speak()</button>
+  <button onclick="shoot()">WAP.camera.capture()</button>
+  <button onclick="record()">WAP.mic.record()</button>
+  <button onclick="shareText()">WAP.share.text()</button>
+  <button onclick="exportFile()">WAP.storage.export()</button>
+  <button class="gray" onclick="clearLog()">clear log</button>
+</div>
+<pre id="log">Ready.</pre>
+<script>
+function log(label, value) {
+  var el = document.getElementById('log');
+  el.textContent = label + ': ' + (value === undefined ? 'ok' : value) + '\n' + el.textContent;
+}
+function clearLog() { document.getElementById('log').textContent = 'Ready.'; }
+function run(label, p) {
+  p.then(function (v) { log(label, typeof v === 'object' ? JSON.stringify(v) : v); })
+   .catch(function (e) { log(label, 'ERROR — ' + e.message); });
+}
+function perms()   { run('permissions', WAP.permissions.get()); }
+function save()    { run('data.writeText', WAP.data.writeText('note.txt', 'saved at ' + new Date().toLocaleTimeString())); }
+function load()    { run('data.readText', WAP.data.readText('note.txt')); }
+function info()    { run('device.info', WAP.device.info()); }
+function vibrate() { run('device.vibrate', WAP.device.vibrate(200)); }
+function clipCopy(){ run('clipboard.write', WAP.clipboard.write('Hello from WAP!')); }
+function clipRead(){ run('clipboard.read', WAP.clipboard.read()); }
+function notify()  { run('notify', WAP.notify('Hello!', 'Sent by the JS API example.')); }
+function speak()   { run('tts.speak', WAP.tts.speak('Hello from Web Application Manager')); }
+function shareText(){ run('share.text', WAP.share.text('Made with WAM!')); }
+function shoot() {
+  WAP.camera.capture().then(function (photo) {
+    log('camera.capture', JSON.stringify(photo));
+  }).catch(function (e) { log('camera.capture', 'ERROR — ' + e.message); });
+}
+function record() {
+  log('mic.record', 'recording 3 s…');
+  WAP.mic.record({ seconds: 3 })
+    .then(function (r) { log('mic.record', JSON.stringify(r)); })
+    .catch(function (e) { log('mic.record', 'ERROR — ' + e.message); });
+}
+function exportFile() { run('storage.export', WAP.storage.export('note.txt')); }
+WAP.permissions.get().then(function (p) {
+  log('permissions', JSON.stringify(p));
+}).catch(function () {});
+</script>
+</body>
+</html>
 """
 
     private fun manifestJson(name: String, type: String, entry: String, bridge: Boolean = false): String {

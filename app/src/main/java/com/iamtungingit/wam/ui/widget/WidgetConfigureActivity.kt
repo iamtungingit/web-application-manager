@@ -2,13 +2,17 @@ package com.iamtungingit.wam.ui.widget
 
 import android.appwidget.AppWidgetManager
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.iamtungingit.wam.R
 import com.iamtungingit.wam.app.WamApp
@@ -16,6 +20,7 @@ import com.iamtungingit.wam.databinding.ActivityWidgetConfigureBinding
 import com.iamtungingit.wam.ui.common.Ui
 import com.iamtungingit.wam.util.JsonUtil
 import com.iamtungingit.wam.wap.manifest.ManifestParser
+import com.iamtungingit.wam.widget.IconCache
 import com.iamtungingit.wam.widget.WidgetRecord
 import com.iamtungingit.wam.widget.WidgetRenderer
 import com.iamtungingit.wam.widget.WidgetStore
@@ -23,6 +28,11 @@ import com.iamtungingit.wam.widget.WidgetStore
 /**
  * Technical exception D4: configuration Activity required by android:configure.
  * Handles both widget-picker creation and "Tap to set up" from a bound widget.
+ *
+ * v1.7.0 (user: "fix the widget setup popup, it's wrong"): rebuilt — a live
+ * preview of the finished widget (same tile/icon/label the launcher draws) on
+ * top, clean label-above-control rows, one swatch per color button. No more
+ * duplicated invisible labels and no dead color-preview square.
  */
 class WidgetConfigureActivity : AppCompatActivity() {
 
@@ -30,9 +40,12 @@ class WidgetConfigureActivity : AppCompatActivity() {
     private val app get() = WamApp.instance
     private var appWidgetId: Int = AppWidgetManager.INVALID_APPWIDGET_ID
     private val entries = mutableListOf<com.iamtungingit.wam.wap.install.RegistryEntry>()
-    private var manifestIcons = mutableMapOf<String, com.iamtungingit.wam.wap.manifest.WapManifest?>()
-    private var bgColor: Int? = null
-    private var textColor: Int? = null
+    private var manifests = mutableMapOf<String, com.iamtungingit.wam.wap.manifest.WapManifest?>()
+    private var bgColor: Int = 0xFF1B5E20.toInt()
+    private var textColor: Int = 0xFFFFFFFF.toInt()
+    /** Icon shown in the preview (per-app icon extracted at install time). */
+    private var previewIcon: Bitmap? = null
+    private var previewName: String = ""
 
     private val presetColors = intArrayOf(
         0xFF1B5E20.toInt(), 0xFF0D47A1.toInt(), 0xFFBF360C.toInt(), 0xFF4A148C.toInt(),
@@ -60,7 +73,7 @@ class WidgetConfigureActivity : AppCompatActivity() {
 
         Ui.runIO {
             val list = app.registry.all().filter { !it.broken }
-            val manifests = list.associate { e ->
+            val parsed = list.associate { e ->
                 Pair(e.wapId, (ManifestParser.fromArchive(
                     com.iamtungingit.wam.storage.Paths.archiveFile(applicationContext, e.wapId),
                     Long.MAX_VALUE / 4
@@ -69,7 +82,7 @@ class WidgetConfigureActivity : AppCompatActivity() {
             Ui.onMain {
                 entries.clear()
                 entries.addAll(list)
-                manifestIcons = manifests.toMutableMap()
+                manifests = parsed.toMutableMap()
                 if (entries.isEmpty()) {
                     Toast.makeText(this, R.string.wc_no_apps, Toast.LENGTH_SHORT).show()
                     finish()
@@ -94,13 +107,13 @@ class WidgetConfigureActivity : AppCompatActivity() {
         bindSpinner(binding.wcNetwork, listOf(
             getString(R.string.net_inherit), getString(R.string.net_deny), getString(R.string.net_ask)
         ), 0)
+        binding.wcShape.onItemSelectedListener = previewRefresh
 
         binding.wcBgColor.setOnClickListener { pickColor(true) }
         binding.wcTextColor.setOnClickListener { pickColor(false) }
         updatePreview()
 
-        // Make the DPI-based sizing visible/verifiable (user asked to size widgets by
-        // detecting the phone's density bucket — mdpi … xxxhdpi — at runtime).
+        // One calm line so the DPI-based sizing stays verifiable on the device.
         val dm = resources.displayMetrics
         val bucket = when {
             dm.densityDpi <= 120 -> "ldpi"
@@ -121,25 +134,37 @@ class WidgetConfigureActivity : AppCompatActivity() {
         binding.wcSave.setOnClickListener { saveAndFinish() }
     }
 
+    private val previewRefresh = object : AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(p: AdapterView<*>?, v: View?, pos: Int, id: Long) {
+            updatePreview()
+        }
+        override fun onNothingSelected(p: AdapterView<*>?) {}
+    }
+
     private fun fillEntries(position: Int) {
         val entry = entries.getOrNull(position) ?: return
-        val manifest = manifestIcons[entry.wapId]
-        val options = (manifest?.effectiveAllowedEntries ?: listOf(entry.wapId))
-            .map { if (manifest?.isOffline == true) it else it }
+        val manifest = manifests[entry.wapId]
+        val options = manifest?.effectiveAllowedEntries ?: listOf(entry.wapId)
         binding.wcEntry.adapter = ArrayAdapter(
             this, android.R.layout.simple_spinner_dropdown_item, options
         )
-        // Problem 1 (user): widgets hold ONE app space — the label/subtitle fields
-        // and the "Show label" toggle are gone; the widget is just the app icon.
         binding.wcFullscreen.isChecked = manifest?.fullscreen ?: false
         bgColor = manifest?.widgetBackgroundColor?.let { JsonUtil.parseColorHex(it) } ?: 0xFF1B5E20.toInt()
         textColor = manifest?.widgetTextColor?.let { JsonUtil.parseColorHex(it) } ?: 0xFFFFFFFF.toInt()
+        previewName = entry.name
+        Ui.runIO {
+            val bmp = IconCache.loadBitmap(applicationContext, entry.wapId)
+            Ui.onMain {
+                previewIcon = bmp
+                updatePreview()
+            }
+        }
         updatePreview()
     }
 
     private fun pickColor(isBackground: Boolean) {
         val presets = if (isBackground) presetColors else textPresetColors
-        val names = presets.map { "#%08X".format(it) }.toTypedArray()
+        val names = presets.map { "#%06X".format(it and 0xFFFFFF) }.toTypedArray()
         com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
             .setTitle(if (isBackground) R.string.wc_bg else R.string.wc_text)
             .setItems(names) { _, which ->
@@ -150,8 +175,22 @@ class WidgetConfigureActivity : AppCompatActivity() {
             .show()
     }
 
+    /** Draws the preview with the SAME renderer pieces the real widget uses. */
     private fun updatePreview() {
-        binding.wcColorPreview.setBackgroundColor(bgColor ?: 0xFF1B5E20.toInt())
+        val sizePx = (96 * resources.displayMetrics.density).toInt()
+        val shape = when (binding.wcShape.selectedItemPosition) {
+            1 -> "square"; 2 -> "circle"; else -> "rounded"
+        }
+        binding.wcPreviewBg.setImageBitmap(
+            IconCache.widgetBackground(shape, bgColor, sizePx, sizePx)
+        )
+        val iconBmp = previewIcon
+            ?: IconCache.defaultIconBitmap(this, sizePx / 2)
+        binding.wcPreviewIcon.setImageBitmap(iconBmp)
+        binding.wcPreviewLabel.text = previewName
+        binding.wcPreviewLabel.setTextColor(textColor)
+        binding.wcBgSwatch.setBackgroundColor(bgColor)
+        binding.wcTextSwatch.setBackgroundColor(textColor)
     }
 
     private fun bindSpinner(spinner: Spinner, arrayRes: Int, selection: Int) {
@@ -172,7 +211,7 @@ class WidgetConfigureActivity : AppCompatActivity() {
     private fun saveAndFinish() {
         val position = binding.wcApp.selectedItemPosition
         val entry = entries.getOrNull(position) ?: return
-        val manifest = manifestIcons[entry.wapId]
+        val manifest = manifests[entry.wapId]
         val entryChoice = binding.wcEntry.selectedItem?.toString()
         val defaultEntry = manifest?.entry ?: "index.html"
 

@@ -53,27 +53,36 @@ class AppSettingsActivity : AppCompatActivity() {
         binding.swMic.isChecked = prefs.mic
         binding.swTts.isChecked = prefs.tts
         binding.swSendData.isChecked = prefs.sendData
+        binding.swVibrate.isChecked = prefs.vibrate
+        binding.swClipboard.isChecked = prefs.clipboard
+        binding.swNotifications.isChecked = prefs.notifications
+        binding.swDevice.isChecked = prefs.deviceInfo
+        binding.swShare.isChecked = prefs.share
+        binding.swExport.isChecked = prefs.exportFiles
 
         // Dangerous default (user request #7): flipping "send data" ON demands a
         // confirmation so nobody enables it accidentally.
         binding.swSendData.setOnCheckedChangeListener { _, checked ->
             if (suppressSave) return@setOnCheckedChangeListener
             if (checked) {
-                MaterialAlertDialogBuilder(this)
-                    .setTitle(R.string.app_perm_send_data_confirm_title)
-                    .setMessage(R.string.app_perm_send_data_confirm_msg)
-                    .setPositiveButton(R.string.action_yes) { _, _ -> persist() }
-                    .setNegativeButton(R.string.action_no) { _, _ ->
-                        suppressSave = true
-                        binding.swSendData.isChecked = false
-                        suppressSave = false
-                    }
-                    .setOnCancelListener {
-                        suppressSave = true
-                        binding.swSendData.isChecked = false
-                        suppressSave = false
-                    }
-                    .show()
+                confirmDanger(R.string.app_perm_send_data_confirm_title,
+                    R.string.app_perm_send_data_confirm_msg,
+                    { persist() },
+                    { binding.swSendData.isChecked = false })
+            } else {
+                persist()
+            }
+        }
+
+        // v1.7.0: Clipboard is the second DANGEROUS toggle — with it on an app can
+        // read whatever the user last copied (passwords, addresses…).
+        binding.swClipboard.setOnCheckedChangeListener { _, checked ->
+            if (suppressSave) return@setOnCheckedChangeListener
+            if (checked) {
+                confirmDanger(R.string.app_perm_clipboard_confirm_title,
+                    R.string.app_perm_clipboard_confirm_msg,
+                    { persist() },
+                    { binding.swClipboard.isChecked = false })
             } else {
                 persist()
             }
@@ -82,6 +91,11 @@ class AppSettingsActivity : AppCompatActivity() {
         binding.swCamera.setOnCheckedChangeListener { _, _ -> persist() }
         binding.swMic.setOnCheckedChangeListener { _, _ -> persist() }
         binding.swTts.setOnCheckedChangeListener { _, _ -> persist() }
+        binding.swVibrate.setOnCheckedChangeListener { _, _ -> persist() }
+        binding.swNotifications.setOnCheckedChangeListener { _, _ -> persist() }
+        binding.swDevice.setOnCheckedChangeListener { _, _ -> persist() }
+        binding.swShare.setOnCheckedChangeListener { _, _ -> persist() }
+        binding.swExport.setOnCheckedChangeListener { _, _ -> persist() }
 
         // ---- Permission examples (v1.6.0 user request #4): one tap applies a
         // realistic preset instead of guessing at individual toggles.
@@ -90,13 +104,16 @@ class AppSettingsActivity : AppCompatActivity() {
         binding.btnPresetTts.setOnClickListener { applyPreset(tts = true) }
         binding.btnPresetOffline.setOnClickListener { applyPreset() }
         binding.btnPresetFull.setOnClickListener {
-            // Full access includes the DANGEROUS "send data" — confirm it explicitly.
+            // Full access includes the DANGEROUS toggles (send data + clipboard) —
+            // confirm it explicitly.
             MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.app_perm_send_data_confirm_title)
                 .setMessage(R.string.preset_full_confirm_msg)
-                .setPositiveButton(R.string.action_yes) { _, _ ->
-                    applyPreset(camera = true, mic = true, tts = true, sendData = true)
-                }
+                .setPositiveButton(R.string.action_yes) { _, _ -> applyPreset(
+                    camera = true, mic = true, tts = true, sendData = true,
+                    vibrate = true, clipboard = true, notifications = true,
+                    deviceInfo = true, share = true, exportFiles = true
+                ) }
                 .setNegativeButton(R.string.action_no, null)
                 .show()
         }
@@ -132,29 +149,71 @@ class AppSettingsActivity : AppCompatActivity() {
         }
     }
 
+    /** Shows the dangerous-permission confirmation; reverts the switch on refusal. */
+    private fun confirmDanger(
+        titleRes: Int,
+        msgRes: Int,
+        onYes: () -> Unit,
+        onRevert: () -> Unit
+    ) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(titleRes)
+            .setMessage(msgRes)
+            .setPositiveButton(R.string.action_yes) { _, _ -> onYes() }
+            .setNegativeButton(R.string.action_no) { _, _ ->
+                suppressSave = true
+                onRevert()
+                suppressSave = false
+            }
+            .setOnCancelListener {
+                suppressSave = true
+                onRevert()
+                suppressSave = false
+            }
+            .show()
+    }
+
     private fun persist() {
         val id = wapId ?: return
         val prefs = com.iamtungingit.wam.settings.AppPrefsRepository.AppPrefs(
             camera = binding.swCamera.isChecked,
             mic = binding.swMic.isChecked,
             tts = binding.swTts.isChecked,
-            sendData = binding.swSendData.isChecked
+            sendData = binding.swSendData.isChecked,
+            vibrate = binding.swVibrate.isChecked,
+            clipboard = binding.swClipboard.isChecked,
+            notifications = binding.swNotifications.isChecked,
+            deviceInfo = binding.swDevice.isChecked,
+            share = binding.swShare.isChecked,
+            exportFiles = binding.swExport.isChecked
         )
         Ui.runIO { app.appPrefs.set(id, prefs) }
     }
 
-    /** Applies an example permission set (v1.6.0 request #4). */
+    /** Applies an example permission set (v1.6.0 request #4, extended in v1.7.0). */
     private fun applyPreset(
         camera: Boolean = false,
         mic: Boolean = false,
         tts: Boolean = false,
-        sendData: Boolean = false
+        sendData: Boolean = false,
+        vibrate: Boolean = false,
+        clipboard: Boolean = false,
+        notifications: Boolean = false,
+        deviceInfo: Boolean = false,
+        share: Boolean = false,
+        exportFiles: Boolean = false
     ) {
         suppressSave = true
         binding.swCamera.isChecked = camera
         binding.swMic.isChecked = mic
         binding.swTts.isChecked = tts
         binding.swSendData.isChecked = sendData
+        binding.swVibrate.isChecked = vibrate
+        binding.swClipboard.isChecked = clipboard
+        binding.swNotifications.isChecked = notifications
+        binding.swDevice.isChecked = deviceInfo
+        binding.swShare.isChecked = share
+        binding.swExport.isChecked = exportFiles
         suppressSave = false
         persist()
         Toast.makeText(this, R.string.app_preset_applied, Toast.LENGTH_SHORT).show()

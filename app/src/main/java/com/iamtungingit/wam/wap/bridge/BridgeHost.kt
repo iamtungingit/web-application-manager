@@ -174,6 +174,70 @@ class BridgeHost(
                 if (f == null) err("bridge_features_unavailable")
                 else f.netSend(req.args) { result -> mainHandler.post { safeReply(reply, result) } }
             }
+            // --------------------------------------- official JS API (v1.7.0 additions)
+            "device.vibrate" -> {
+                val f = features
+                if (f == null) err("bridge_features_unavailable")
+                else f.deviceVibrate(req.args.optInt("ms", 200)) { result ->
+                    mainHandler.post { safeReply(reply, result) }
+                }
+            }
+            "device.info" -> {
+                val f = features
+                if (f == null) err("bridge_features_unavailable")
+                else f.deviceInfo { result -> mainHandler.post { safeReply(reply, result) } }
+            }
+            "clipboard.read" -> {
+                val f = features
+                if (f == null) err("bridge_features_unavailable")
+                else f.clipboardRead { result -> mainHandler.post { safeReply(reply, result) } }
+            }
+            "clipboard.write" -> {
+                val f = features
+                if (f == null) err("bridge_features_unavailable")
+                else {
+                    val text = BridgeProtocol.stringArg(req.args, "text")
+                    if (text == null) err("invalid_args")
+                    else f.clipboardWrite(text) { result ->
+                        mainHandler.post { safeReply(reply, result) }
+                    }
+                }
+            }
+            "notify" -> {
+                val f = features
+                if (f == null) err("bridge_features_unavailable")
+                else f.notify(
+                    BridgeProtocol.stringArg(req.args, "title") ?: "",
+                    BridgeProtocol.stringArg(req.args, "body") ?: ""
+                ) { result -> mainHandler.post { safeReply(reply, result) } }
+            }
+            "share.text" -> {
+                val f = features
+                if (f == null) err("bridge_features_unavailable")
+                else {
+                    val text = BridgeProtocol.stringArg(req.args, "text")
+                    if (text == null) err("invalid_args")
+                    else f.shareText(text) { result -> mainHandler.post { safeReply(reply, result) } }
+                }
+            }
+            "share.file" -> {
+                val f = features
+                if (f == null) err("bridge_features_unavailable")
+                else {
+                    val name = BridgeProtocol.stringArg(req.args, "name")
+                    if (name == null) err("invalid_name")
+                    else f.shareFile(name) { result -> mainHandler.post { safeReply(reply, result) } }
+                }
+            }
+            "storage.export" -> {
+                val f = features
+                if (f == null) err("bridge_features_unavailable")
+                else {
+                    val name = BridgeProtocol.stringArg(req.args, "name")
+                    if (name == null) err("invalid_name")
+                    else f.exportFile(name) { result -> mainHandler.post { safeReply(reply, result) } }
+                }
+            }
             "data.readDataUrl" -> {
                 // Reads a binary saved by camera/mic as a data: URL (≤ 1 MB).
                 val name = BridgeProtocol.stringArg(req.args, "name")
@@ -298,6 +362,24 @@ window.WAP = {
         base64: !!opts.base64
       });
     }
+  },
+  device: {
+    vibrate: function(ms) { return send('device.vibrate', { ms: ms || 200 }); },
+    info: function() { return send('device.info', {}); }
+  },
+  clipboard: {
+    read: function() { return send('clipboard.read', {}); },
+    write: function(text) { return send('clipboard.write', { text: String(text) }); }
+  },
+  notify: function(title, body) {
+    return send('notify', { title: String(title || ''), body: String(body || '') });
+  },
+  share: {
+    text: function(text) { return send('share.text', { text: String(text) }); },
+    file: function(name) { return send('share.file', { name: String(name) }); }
+  },
+  storage: {
+    export: function(name) { return send('storage.export', { name: String(name) }); }
   },
   permissions: {
     get: function() { return send('permissions.get', {}); }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.WAM" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/wam_primary</item>
+        <item name="colorOnPrimary">@color/wam_on_primary</item>
+        <item name="colorPrimaryContainer">@color/wam_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/wam_on_primary_container</item>
+        <item name="colorSecondary">@color/wam_secondary</item>
+        <item name="colorSecondaryContainer">@color/wam_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/wam_on_secondary_container</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Theme.WAM.Dialog" parent="Theme.Material3.DayNight.Dialog">
+        <item name="colorPrimary">@color/wam_primary</item>
+        <item name="colorOnPrimary">@color/wam_on_primary</item>
+        <item name="colorPrimaryContainer">@color/wam_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/wam_on_primary_container</item>
+    </style>
+
+    <style name="TextAppearance.WAM.SectionHeader" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
+
+    <style name="Widget.WAM.TypeBadge" parent="Widget.Material3.Button">
+        <item name="android:clickable">false</item>
+        <item name="android:focusable">false</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+</resources>

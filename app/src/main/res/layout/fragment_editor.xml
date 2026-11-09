@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/editor_mode_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginTop="4dp"
+        app:singleSelection="true"
+        app:selectionRequired="true">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_mode_files"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/editor_files"
+            app:icon="@drawable/ic_folder" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_mode_code"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/editor_code"
+            app:icon="@drawable/ic_code" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_mode_manifest"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/editor_manifest"
+            app:icon="@drawable/ic_info" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <!-- Files panel -->
+    <LinearLayout
+        android:id="@+id/panel_files"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- Top action row (v1.5.0 user request #8): ONE Create button with the
+             type dialog + an Import button right next to it. The old New file /
+             New folder pair (with the weird folder icon) is gone. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_create"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/editor_create"
+                android:contentDescription="@string/editor_create"
+                app:icon="@drawable/ic_add"
+                app:iconGravity="textStart" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_import_files"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:text="@string/editor_import"
+                android:contentDescription="@string/editor_import"
+                app:icon="@drawable/ic_open"
+                app:iconGravity="textStart" />
+        </LinearLayout>
+
+        <!-- Path row: up-navigation (new in v1.5.0 — the file list had no way back
+             to the project root) + live path + search toggle. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:paddingEnd="12dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_up"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/editor_up"
+                app:icon="@drawable/ic_up" />
+
+            <TextView
+                android:id="@+id/editor_path"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="monospace"
+                android:textSize="12sp"
+                android:maxLines="2"
+                android:ellipsize="start"
+                android:textColor="?android:attr/textColorSecondary" />
+
+            <!-- Sort control (v1.6.0 "more controls"): cycles name A→Z / Z→A / largest. -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_sort"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/action_sort"
+                app:icon="@drawable/ic_sort" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_search_files"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/editor_search_files"
+                app:icon="@drawable/ic_search" />
+        </LinearLayout>
+
+        <!-- Search filter (v1.5.0 "more controls for file manager"). -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/files_search_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="4dp"
+            android:hint="@string/editor_search_files"
+            android:visibility="gone">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/files_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:imeOptions="actionDone"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/files_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingBottom="8dp" />
+
+        <!-- Mount bar (v1.5.0 user request #8: "below the file manager a mount
+             button") — mounts the project to a device (SAF) folder so it can be
+             edited from other apps too; WAM mirrors every change automatically. -->
+        <LinearLayout
+            android:id="@+id/mount_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="8dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_mount"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/editor_mount"
+                android:contentDescription="@string/editor_mount_hint"
+                app:icon="@drawable/ic_mount"
+                app:iconGravity="textStart" />
+
+            <TextView
+                android:id="@+id/mount_status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:maxLines="1"
+                android:ellipsize="middle"
+                android:textColor="?android:attr/textColorSecondary"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_sync_mount"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/editor_mount_sync"
+                app:icon="@drawable/ic_retry"
+                android:visibility="gone" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_unmount"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/editor_mount_unmount"
+                app:icon="@drawable/ic_close"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Code panel -->
+    <LinearLayout
+        android:id="@+id/panel_code"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/editor_file_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="4dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:background="?attr/colorSurfaceVariant">
+
+            <TextView
+                android:id="@+id/editor_file_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="monospace"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="start"
+                android:textColor="?android:attr/textColorPrimary" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_close_file"
+                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/action_close"
+                app:icon="@drawable/ic_close" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/editor_code_area"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:background="@color/code_editor_bg">
+
+            <TextView
+                android:id="@+id/editor_gutter"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:minWidth="36dp"
+                android:fontFamily="monospace"
+                android:textSize="@dimen/editor_text_size"
+                android:lineSpacingMultiplier="1.0"
+                android:gravity="top|end"
+                android:paddingStart="8dp"
+                android:paddingEnd="6dp"
+                android:paddingTop="12dp"
+                android:textColor="@color/code_gutter"
+                android:importantForAccessibility="no" />
+
+            <EditText
+                android:id="@+id/editor_text"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@null"
+                android:fontFamily="monospace"
+                android:inputType="textMultiLine|textNoSuggestions"
+                android:gravity="top|start"
+                android:lineSpacingMultiplier="1.0"
+                android:paddingTop="12dp"
+                android:paddingStart="6dp"
+                android:paddingEnd="8dp"
+                android:textSize="@dimen/editor_text_size"
+                android:importantForAutofill="no"
+                android:scrollbars="horizontal|vertical" />
+        </LinearLayout>
+
+        <!-- Explains the otherwise "mysterious" empty black editor (user-reported):
+             shown when Code mode is active but no file is open. -->
+        <TextView
+            android:id="@+id/editor_empty_state"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:drawableTop="@drawable/ic_code"
+            android:drawableTint="?attr/colorPrimary"
+            android:drawablePadding="16dp"
+            android:text="@string/editor_empty_file"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?android:attr/textColorSecondary"
+            android:background="@color/code_editor_bg"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_undo"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/editor_undo"
+                app:icon="@drawable/ic_undo" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_redo"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/editor_redo"
+                app:icon="@drawable/ic_redo" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_find"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/editor_find"
+                app:icon="@drawable/ic_search" />
+
+            <TextView
+                android:id="@+id/editor_line_col"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="monospace"
+                android:textSize="12sp"
+                android:textColor="?android:attr/textColorSecondary" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/editor_save"
+                app:icon="@drawable/ic_save" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Manifest / package panel -->
+    <ScrollView
+        android:id="@+id/panel_manifest"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_manifest_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/manifest_form_title"
+                app:icon="@drawable/ic_edit" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_manifest_raw"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/manifest_raw_json"
+                app:icon="@drawable/ic_code" />
+
+            <TextView
+                android:id="@+id/manifest_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="?android:attr/textColorSecondary" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_package"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/pkg_action"
+                app:icon="@drawable/ic_archive" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_package_install"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/pkg_install_action"
+                app:icon="@drawable/ic_open" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_preview"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/preview_action"
+                app:icon="@drawable/ic_preview" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_export_wap"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="24dp"
+                android:text="@string/menu_export_wap"
+                app:icon="@drawable/ic_export" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

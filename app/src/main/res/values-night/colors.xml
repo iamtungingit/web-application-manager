@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="badge_offline_bg">#12331A</color>
+    <color name="badge_offline_text">#A5D6A7</color>
+    <color name="badge_online_bg">#12253D</color>
+    <color name="badge_online_text">#90CAF9</color>
+
+    <color name="console_bg">#14181A</color>
+    <color name="console_text">#DDE5E0</color>
+    <color name="divider">#33FFFFFF</color>
+
+    <!-- Code editor syntax palette (Material 3 Night, green-tinted dark surfaces). -->
+    <color name="code_gutter">#5C6B5E</color>
+    <color name="code_tag">#80CBC4</color>
+    <color name="code_attr">#FFB74D</color>
+    <color name="code_string">#A5D6A7</color>
+    <color name="code_comment">#6F8B74</color>
+    <color name="code_number">#F48FB1</color>
+    <color name="code_keyword">#CE93D8</color>
+    <color name="code_property">#90CAF9</color>
+    <color name="code_literal">#F48FB1</color>
+    <color name="code_editor_bg">#101412</color>
+
+    <!-- Per-file-type icon tints (night) — brightened for dark surfaces. -->
+    <color name="file_image">#F191BD</color>
+    <color name="file_video">#FF8A8A</color>
+    <color name="file_audio">#66D9E8</color>
+    <color name="file_html">#FFA94D</color>
+    <color name="file_css">#74C0FC</color>
+    <color name="file_js">#FFD65C</color>
+    <color name="file_json">#8CE99A</color>
+    <color name="file_xml">#E599F7</color>
+    <color name="file_txt">#A7BDC7</color>
+    <color name="file_archive">#D7CCC8</color>
+</resources>

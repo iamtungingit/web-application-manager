@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="wam_primary">#2E7D32</color>
+    <color name="wam_on_primary">#FFFFFF</color>
+    <color name="wam_primary_container">#B7E4B7</color>
+    <color name="wam_on_primary_container">#0B3D0E</color>
+    <color name="wam_secondary">#00695C</color>
+    <color name="wam_secondary_container">#CCE8E4</color>
+    <color name="wam_on_secondary_container">#00201C</color>
+
+    <color name="ic_launcher_background">#1B5E20</color>
+
+    <color name="badge_offline_bg">#E8F5E9</color>
+    <color name="badge_offline_text">#1B5E20</color>
+    <color name="badge_online_bg">#E3F2FD</color>
+    <color name="badge_online_text">#0D47A1</color>
+
+    <color name="widget_default_bg">#1B5E20</color>
+    <color name="widget_default_text">#FFFFFF</color>
+
+    <color name="console_bg">#F0F4F1</color>
+    <color name="console_text">#1B1F1C</color>
+    <color name="divider">#1F000000</color>
+
+    <!-- Code editor syntax palette (light). Night variants in values-night. -->
+    <color name="code_gutter">#668B8683</color>
+    <color name="code_tag">#00695C</color>
+    <color name="code_attr">#B06000</color>
+    <color name="code_string">#2E7D32</color>
+    <color name="code_comment">#8D8D8D</color>
+    <color name="code_number">#C2185B</color>
+    <color name="code_keyword">#7B1FA2</color>
+    <color name="code_property">#1565C0</color>
+    <color name="code_literal">#C2185B</color>
+    <color name="code_editor_bg">#FCFDFB</color>
+
+    <!-- Per-file-type icon tints (v1.5.0) — night variants in values-night. -->
+    <color name="file_image">#C2255C</color>
+    <color name="file_video">#C92A2A</color>
+    <color name="file_audio">#0C8599</color>
+    <color name="file_html">#E8590C</color>
+    <color name="file_css">#1971C2</color>
+    <color name="file_js">#B08D00</color>
+    <color name="file_json">#2F9E44</color>
+    <color name="file_xml">#9C36B5</color>
+    <color name="file_txt">#607D8B</color>
+    <color name="file_archive">#8D6E63</color>
+
+    <!-- Dangerous-permission marker (v1.5.0 App settings red asterisk). -->
+    <color name="dangerous_red">#C62828</color>
+</resources>

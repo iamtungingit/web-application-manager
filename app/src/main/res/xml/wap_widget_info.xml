@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Problem 1 (user): "make the widgets hold 1 app space and stop with that tall
+     crap" — the widget is now a fixed 1×1 app-icon shortcut: one app, one icon,
+     no resizable tall layouts. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="40dp"
+    android:minHeight="40dp"
+    android:targetCellWidth="1"
+    android:targetCellHeight="1"
+    android:minResizeWidth="40dp"
+    android:minResizeHeight="40dp"
+    android:updatePeriodMillis="0"
+    android:initialLayout="@layout/widget_wap"
+    android:previewLayout="@layout/widget_wap"
+    android:configure="com.iamtungingit.wam.ui.widget.WidgetConfigureActivity"
+    android:widgetCategory="home_screen"
+    android:resizeMode="none"
+    android:description="@string/widget_description" />

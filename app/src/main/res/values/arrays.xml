@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Position in these arrays maps to the constants in code (documented next to each usage). -->
+    <string-array name="array_orientations">
+        <item>@string/orientation_unspecified</item>
+        <item>@string/orientation_portrait</item>
+        <item>@string/orientation_landscape</item>
+        <item>@string/orientation_sensor</item>
+    </string-array>
+
+    <string-array name="array_themes">
+        <item>@string/theme_system</item>
+        <item>@string/theme_light</item>
+        <item>@string/theme_dark</item>
+    </string-array>
+
+    <string-array name="array_network">
+        <item>@string/net_ask</item>
+        <item>@string/net_allow</item>
+        <item>@string/net_deny</item>
+    </string-array>
+
+    <string-array name="array_shapes">
+        <item>@string/shape_rounded</item>
+        <item>@string/shape_square</item>
+        <item>@string/shape_circle</item>
+    </string-array>
+
+    <string-array name="array_templates">
+        <item>@string/template_blank</item>
+        <item>@string/template_hello</item>
+        <item>@string/template_calculator</item>
+        <item>@string/template_online</item>
+    </string-array>
+
+    <string-array name="array_app_layout">
+        <item>@string/layout_grid</item>
+        <item>@string/layout_list</item>
+    </string-array>
+
+    <!-- Position maps to previewEngine in SettingsRepository (0 = built-in browser,
+         the v1.5.0 default; 1 = external device browser). -->
+    <string-array name="array_preview_engine">
+        <item>@string/engine_webview</item>
+        <item>@string/engine_browser</item>
+    </string-array>
+
+    <!-- Position maps to the Create-dialog type selector in ProjectEditorFragment
+         (0 html · 1 css · 2 js · 3 folder · 4 other). -->
+    <string-array name="array_create_types">
+        <item>HTML</item>
+        <item>CSS</item>
+        <item>JavaScript</item>
+        <item>Folder</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="array_log_levels">
+        <item>ERROR</item>
+        <item>WARN</item>
+        <item>INFO</item>
+        <item>DEBUG</item>
+    </string-array>
+</resources>

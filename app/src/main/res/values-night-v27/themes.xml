@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- API 27+ night: light navigation-bar icons over the dark transparent gesture bar. -->
+<resources>
+    <style name="Theme.WAM" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#A5D6A7</item>
+        <item name="colorOnPrimary">#0A3D10</item>
+        <item name="colorPrimaryContainer">#1F5223</item>
+        <item name="colorOnPrimaryContainer">#D3EAD4</item>
+        <item name="colorSecondary">#80CBC4</item>
+        <item name="colorOnSecondary">#003733</item>
+        <item name="colorSecondaryContainer">#24413E</item>
+        <item name="colorOnSecondaryContainer">#CCE8E4</item>
+
+        <item name="colorSurface">#121612</item>
+        <item name="colorOnSurface">#E1E5DF</item>
+        <item name="colorSurfaceVariant">#212721</item>
+        <item name="colorOnSurfaceVariant">#BFC9BE</item>
+        <item name="colorOutline">#89928A</item>
+        <item name="colorSurfaceContainer">#191E19</item>
+        <item name="colorSurfaceContainerHigh">#232923</item>
+        <item name="android:colorBackground">#101410</item>
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+
+    <style name="Theme.WAM.Dialog" parent="Theme.Material3.DayNight.Dialog">
+        <item name="colorPrimary">#A5D6A7</item>
+        <item name="colorOnPrimary">#0A3D10</item>
+        <item name="colorPrimaryContainer">#1F5223</item>
+        <item name="colorOnPrimaryContainer">#D3EAD4</item>
+        <item name="colorSecondary">#80CBC4</item>
+        <item name="colorSecondaryContainer">#24413E</item>
+        <item name="colorOnSecondaryContainer">#CCE8E4</item>
+        <item name="android:colorBackground">#101410</item>
+    </style>
+</resources>

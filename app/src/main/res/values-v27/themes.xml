@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- API 27+: dark (light-colored) navigation-bar icons in the light theme so the
+     transparent gesture bar stays readable over light surfaces. -->
+<resources>
+    <style name="Theme.WAM" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/wam_primary</item>
+        <item name="colorOnPrimary">@color/wam_on_primary</item>
+        <item name="colorPrimaryContainer">@color/wam_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/wam_on_primary_container</item>
+        <item name="colorSecondary">@color/wam_secondary</item>
+        <item name="colorSecondaryContainer">@color/wam_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/wam_on_secondary_container</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+
+    <style name="Theme.WAM.Dialog" parent="Theme.Material3.DayNight.Dialog">
+        <item name="colorPrimary">@color/wam_primary</item>
+        <item name="colorOnPrimary">@color/wam_on_primary</item>
+        <item name="colorPrimaryContainer">@color/wam_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/wam_on_primary_container</item>
+    </style>
+</resources>

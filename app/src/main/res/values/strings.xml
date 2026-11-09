@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- General -->
+    <string name="app_name">Web Application Manager</string>
+    <string name="action_ok">OK</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_rename">Rename</string>
+    <string name="action_save">Save</string>
+    <string name="action_close">Close</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_open">Open</string>
+    <string name="action_share">Share</string>
+    <string name="action_yes">Yes</string>
+    <string name="action_no">No</string>
+    <string name="action_reset">Reset</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_continue">Continue</string>
+    <string name="action_duplicate">Duplicate</string>
+    <string name="loading_please_wait">Please wait…</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Main -->
+    <string name="tab_apps">Apps</string>
+    <string name="tab_projects">Projects</string>
+    <string name="import_wap">Import WAP</string>
+    <string name="import_wap_hint">Install a .wap package file</string>
+    <string name="new_project">New project</string>
+    <string name="import_project">Import project</string>
+    <string name="import_project_hint">Copy a folder from device storage</string>
+    <string name="empty_apps_title">No apps installed</string>
+    <string name="empty_apps_subtitle">Import a .wap package or create and package a project from the Projects tab.</string>
+    <string name="empty_projects_title">No developer projects</string>
+    <string name="empty_projects_subtitle">Create a new project to build your own .wap apps inside WAM.</string>
+    <string name="external_storage_unavailable">Shared storage unavailable — projects are stored in private storage instead.</string>
+    <string name="app_count_format">%1$d app(s) installed</string>
+    <string name="type_offline">Offline</string>
+    <string name="type_online">Online</string>
+    <string name="menu_create_widget">Create widget</string>
+    <string name="menu_manage_widgets">Manage home-screen widgets</string>
+    <string name="menu_guide">JS API &amp; help</string>
+    <string name="menu_export_wap">Export (.wap)</string>
+    <string name="menu_info">Info</string>
+    <string name="menu_clear_data">Clear data</string>
+    <string name="menu_uninstall">Uninstall</string>
+
+    <!-- Widget manager -->
+    <string name="widget_manager_title">Home-screen widgets</string>
+    <string name="widget_manager_empty">No widgets are bound to WAM apps yet. Create one from an app\'s menu, or add a widget from the home screen.</string>
+    <string name="widget_status_ok">OK</string>
+    <string name="widget_status_orphan">Orphaned (no record)</string>
+    <string name="widget_status_removed">App removed</string>
+    <string name="widget_remove_binding">Remove binding</string>
+    <string name="widget_description">Quick launcher for an installed WAP app</string>
+    <string name="widget_setup_hint">Tap to set up</string>
+    <string name="widget_app_removed">App removed</string>
+    <string name="widget_pinned_hint">The launcher will now ask you to confirm adding the widget.</string>
+    <string name="widget_pin_unsupported">Your launcher does not support direct pinning. Add the widget from the home screen menu instead.</string>
+
+    <!-- Install -->
+    <string name="install_title">Install app</string>
+    <string name="install_row_name">Name</string>
+    <string name="install_row_id">Package id</string>
+    <string name="install_row_version">Version</string>
+    <string name="install_row_type">Type</string>
+    <string name="install_row_network">Needs internet</string>
+    <string name="install_row_size">Archive size</string>
+    <string name="install_row_state">Action</string>
+    <string name="install_row_entry">Entry</string>
+    <string name="install_state_new">Install new app</string>
+    <string name="install_state_update">Update (data kept)</string>
+    <string name="install_state_reinstall">Reinstall same version</string>
+    <string name="install_state_downgrade">Downgrade (requires confirmation)</string>
+    <string name="install_yes">Yes</string>
+    <string name="install_no">No</string>
+    <string name="install_warning_header">Warnings</string>
+    <string name="identity_change_warning">This package has the same id as an installed app but a different name, author or content. The new app will gain access to the existing app\'s data.</string>
+    <string name="install_btn">Install</string>
+    <string name="install_success">Installed %1$s</string>
+    <string name="install_failed">Install failed: %1$s</string>
+    <string name="import_reading">Reading package…</string>
+    <string name="import_invalid_archive">This file is not a valid WAP package.</string>
+    <string name="import_from">From: %1$s</string>
+    <string name="extension_changed_warning">The file provider changed the file name to %1$s — the .wap extension was not preserved.</string>
+
+    <!-- Uninstall / clear data -->
+    <string name="uninstall_title">Uninstall app</string>
+    <string name="uninstall_message">Remove %1$s from WAM? The archive, icon and its home-screen widgets will be removed.</string>
+    <string name="uninstall_keep_data">Keep persistent app data</string>
+    <string name="uninstall_delete_data">Also delete app data</string>
+    <string name="uninstall_success">Uninstalled %1$s</string>
+    <string name="clear_data_title">Clear app data</string>
+    <string name="clear_data_message">Delete all persistent data of %1$s? This includes its bridge files and this app\'s WebView storage. The installed archive is kept.</string>
+    <string name="clear_data_done">App data cleared</string>
+
+    <!-- Projects -->
+    <string name="dialog_new_project_title">New project</string>
+    <string name="project_name_label">Project name</string>
+    <string name="template_label">Template</string>
+    <string name="template_blank">Blank</string>
+    <string name="template_hello">Hello (offline)</string>
+    <string name="template_calculator">Calculator demo</string>
+    <string name="template_online">Online site</string>
+    <string name="action_create">Create</string>
+    <string name="project_menu_open">Open editor</string>
+    <string name="project_menu_rename">Rename</string>
+    <string name="project_menu_duplicate">Duplicate</string>
+    <string name="project_menu_delete">Delete</string>
+    <string name="project_menu_export_folder">Export folder</string>
+    <string name="project_menu_add_assets">Add assets…</string>
+    <string name="project_menu_import_folder">Import project folder…</string>
+    <string name="dialog_rename_title">Rename project</string>
+    <string name="dialog_delete_project_message">Delete project %1$s and all its files? This cannot be undone.</string>
+    <string name="project_created">Project %1$s created</string>
+    <string name="name_taken">A project with this name already exists</string>
+    <string name="name_invalid">Invalid name: use letters, digits, dash (-) or underscore (_) only — no spaces. Max 48 characters.</string>
+    <string name="package_id_preview">Package id: %1$s</string>
+    <string name="manifest_missing_generated">No manifest.json was found in the imported folder, so a new one was generated. Please review it in the editor.</string>
+    <string name="project_manifest_invalid">Manifest issue: %1$s</string>
+
+    <!-- Editor -->
+    <string name="editor_files">Files</string>
+    <string name="editor_code">Code</string>
+    <string name="editor_manifest">Manifest</string>
+    <string name="editor_new_file">New file</string>
+    <string name="editor_new_folder">New folder</string>
+    <string name="editor_create">Create</string>
+    <string name="editor_import">Import</string>
+    <string name="editor_up">Up one level</string>
+    <string name="editor_search_files">Search files</string>
+    <string name="editor_save">Save</string>
+    <string name="editor_undo">Undo</string>
+    <string name="editor_redo">Redo</string>
+    <string name="editor_find">Find</string>
+    <string name="editor_saved">Saved</string>
+    <string name="editor_unsaved_title">Unsaved changes</string>
+    <string name="editor_unsaved_message">Discard unsaved changes in the open file?</string>
+    <string name="editor_discard">Discard</string>
+    <string name="editor_file_too_big">Files up to 1 MB can be edited</string>
+    <string name="editor_binary">Binary files cannot be edited</string>
+    <string name="editor_empty_file">No file open — pick one in the Files tab</string>
+    <string name="editor_find_hint">Find text</string>
+    <string name="editor_find_next">Find next</string>
+    <string name="file_exists">A file with this name already exists</string>
+    <string name="invalid_file_name">Invalid name (relative path, no .., max 255 chars)</string>
+    <string name="new_file_default">newpage.html</string>
+    <string name="new_folder_default">assets</string>
+    <string name="delete_item_message">Delete %1$s?</string>
+
+    <!-- Create dialog (v1.5.0 request #8.1) -->
+    <string name="create_dialog_title">Create</string>
+    <string name="create_name_hint">File name</string>
+    <string name="create_name_rules">Rules: letters, digits, dot, dash, underscore — no spaces or \/:*?\"&lt;&gt;|</string>
+    <string name="create_ext_hint">Extension (e.g. .php, .ts, .htaccess)</string>
+    <string name="create_type_label">Type</string>
+    <string name="create_err_too_long">Name is too long</string>
+    <string name="create_err_reserved">\".\" and \"..\" are reserved names</string>
+    <string name="create_err_bad_char">\"%1$s\" is not allowed in file names</string>
+    <string name="create_err_ext_empty">Type an extension or leave the field empty</string>
+    <string name="create_done">Created %1$s</string>
+
+    <!-- Import files/folders (v1.5.0 request #8.2) -->
+    <string name="import_pick_files">Files… (one or more)</string>
+    <string name="import_pick_folder">Folder… (from device storage)</string>
+    <string name="import_files_done">Imported %1$d file(s)</string>
+
+    <!-- Mount to SAF folder (v1.5.0 requests #5 / #8.3) -->
+    <string name="editor_mount">Mount to folder</string>
+    <string name="editor_mount_hint">Mirror this project into a device folder so you can edit it with other apps too</string>
+    <string name="editor_mounted_to">Mounted: %1$s</string>
+    <string name="editor_mount_sync">Sync now</string>
+    <string name="editor_mount_unmount">Unmount</string>
+    <string name="editor_mount_unmount_msg">Stop mirroring? The mounted folder is kept as-is; WAM stops syncing it. Mount again later to re-link.</string>
+    <string name="editor_mount_done">Mounted to %1$s — the folder now mirrors this project</string>
+    <string name="editor_mount_syncing">Syncing with mounted folder…</string>
+    <string name="editor_mount_sync_done">Synced (%1$d change(s))</string>
+    <string name="editor_mount_sync_failed">Sync failed: %1$s</string>
+    <string name="editor_mount_unmounted">Unmounted</string>
+
+    <!-- Manifest editor -->
+    <string name="manifest_form_title">Manifest form</string>
+    <string name="manifest_raw_json">Raw JSON</string>
+    <string name="mf_name">Name</string>
+    <string name="mf_id">Package id</string>
+    <string name="mf_version">Version (x.y.z)</string>
+    <string name="mf_version_code">versionCode (optional)</string>
+    <string name="mf_description">Description</string>
+    <string name="mf_author">Author</string>
+    <string name="mf_type">Type</string>
+    <string name="mf_entry">Entry (offline: file path, online: https URL)</string>
+    <string name="mf_icon">Icon path (PNG/JPEG/WebP, optional)</string>
+    <string name="mf_fullscreen">Fullscreen</string>
+    <string name="mf_orientation">Orientation</string>
+    <string name="mf_theme">Theme</string>
+    <string name="mf_network_required">Needs internet (informational)</string>
+    <string name="mf_bridge">Enable data bridge</string>
+    <string name="mf_widget_enabled">Enable widget</string>
+    <string name="mf_widget_label">Widget label</string>
+    <string name="mf_widget_subtitle">Widget subtitle</string>
+    <string name="mf_saved">manifest.json saved</string>
+    <string name="mf_invalid_title">Manifest not valid</string>
+    <string name="mf_invalid">Manifest errors:\n%1$s</string>
+    <string name="mf_id_suggestion">Invalid id. Use the suggested id %1$s?</string>
+
+    <!-- Packaging -->
+    <string name="pkg_action">Package .wap</string>
+    <string name="pkg_install_action">Package &amp; install</string>
+    <string name="preview_action">Preview</string>
+    <string name="packaging_running">Packaging…</string>
+    <string name="pkg_ok">Package created: %1$s</string>
+    <string name="pkg_ok_title">Package ready</string>
+    <string name="pkg_failed_title">Packaging failed</string>
+    <string name="pkg_failed">Packaging failed:\n%1$s</string>
+    <string name="preview_started">Preview started (data is isolated from installed apps)</string>
+
+    <!-- Runtime -->
+    <string name="runtime_loading">Loading %1$s…</string>
+    <string name="runtime_error_title">Cannot run this app</string>
+    <string name="runtime_err_app_missing">App not found: %1$s</string>
+    <string name="runtime_err_hash">The package changed since installation (checksum mismatch). Reinstall it from a trusted copy.</string>
+    <string name="runtime_err_runtime_old">This app needs runtime version %1$s, but this WAM provides %2$s.</string>
+    <string name="runtime_err_generic">Could not load the app:\n%1$s</string>
+    <string name="runtime_err_network_denied">Internet access is denied for this app.</string>
+    <string name="runtime_err_url_line">Address: %1$s</string>
+    <string name="runtime_err_network_hint">Check the address and your connection. If this app needs internet, tap Retry and allow access.</string>
+    <string name="runtime_err_watchdog">The page did not finish loading within %1$d s. Its address may be wrong, the server may be down, or the device\'s WebView may have stopped drawing. Details are in the console below.</string>
+    <string name="runtime_err_watchdog_noview">The screen could not be created — WAM could not open its WebView engine. Check that “Android System WebView” is enabled in system settings, then try again.</string>
+    <string name="runtime_err_webview_missing">This device has no working WebView engine. WAM cannot render apps without it. Enable “Android System WebView” (and/or Chrome) in system settings, then try again.</string>
+    <string name="runtime_err_renderer_broken">The WebView still paints a solid black frame, even in compatibility mode. This is a device graphics/WebView problem, not a problem with the app. Try: system update, updating “Android System WebView”, or turning off system-wide “Force dark”. Details are in the console below.</string>
+    <string name="runtime_compat_mode">Compatibility renderer enabled — recreated the screen in software mode.</string>
+    <string name="runtime_net_prompt_title">Allow internet access for %1$s?</string>
+    <string name="runtime_btn_allow_once">Allow once</string>
+    <string name="runtime_btn_allow_always">Always allow</string>
+    <string name="runtime_btn_deny_once">Deny once</string>
+    <string name="runtime_btn_deny_always">Always deny</string>
+    <string name="runtime_external_title">Open external link?</string>
+    <string name="runtime_external_msg">This link leaves %1$s:\n%2$s</string>
+    <string name="runtime_btn_open_browser">Open in browser</string>
+    <string name="runtime_exit_title">Close %1$s?</string>
+    <string name="runtime_exit_msg">Persistent app data is kept. Temporary files are deleted.</string>
+    <string name="runtime_console">Developer console</string>
+    <string name="runtime_console_empty">No console output yet.</string>
+    <string name="runtime_download_ready">Download ready (%1$s). Save to…</string>
+    <string name="runtime_download_failed">Download failed: %1$s</string>
+
+    <!-- Browser engine hand-off (kept as an option; v1.5.0 default is the built-in browser). -->
+    <string name="runtime_handoff_title">Running in your browser</string>
+    <string name="runtime_handoff_msg">“%1$s” was handed to your browser — Chrome (Chromium) or Firefox render it. This screen keeps the local preview alive while the app runs; tap below to reopen it.</string>
+    <string name="runtime_handoff_no_browser">No browser app was found. Install Chrome or Firefox, then tap “Open in browser” again — or use “Open in built-in browser”.</string>
+    <string name="runtime_btn_builtin">Open in built-in browser</string>
+    <string name="set_preview_engine">Preview engine</string>
+    <string name="engine_webview">Built-in browser (opens inside WAM) — default</string>
+    <string name="engine_browser">Open in device browser (Chrome / Firefox)</string>
+
+    <!-- Widget configuration -->
+    <string name="widget_configure_title">Configure widget</string>
+    <string name="wc_app">App</string>
+    <string name="wc_entry">Entry (from allowed entries)</string>
+    <string name="wc_shape">Shape</string>
+    <string name="shape_square">Square</string>
+    <string name="shape_rounded">Rounded</string>
+    <string name="shape_circle">Circle</string>
+    <string name="wc_theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="wc_network">Network policy</string>
+    <string name="net_inherit">Inherit user setting</string>
+    <string name="net_allow">Allow</string>
+    <string name="net_deny">Deny</string>
+    <string name="net_ask">Ask</string>
+    <string name="wc_fullscreen">Fullscreen</string>
+    <string name="wc_bg">Background color</string>
+    <string name="wc_text">Text color</string>
+    <string name="wc_save">Save widget</string>
+    <string name="wc_pick_app">Select an app…</string>
+    <string name="wc_no_apps">No apps installed yet.</string>
+    <string name="wc_density_info">Screen density: %1$s (%2$d dpi · %3$s) — the widget background is drawn at the full launcher-cell size in real pixels, so it fills its cell identically on mdpi, hdpi, xhdpi, xxhdpi and xxxhdpi devices.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="sec_defaults">Default runtime behavior</string>
+    <string name="set_default_fullscreen">Default fullscreen</string>
+    <string name="set_default_orientation">Default orientation</string>
+    <string name="orientation_unspecified">Unspecified</string>
+    <string name="orientation_portrait">Portrait</string>
+    <string name="orientation_landscape">Landscape</string>
+    <string name="orientation_sensor">Sensor</string>
+    <string name="set_keep_screen_on">Keep screen on by default</string>
+    <string name="set_confirm_exit">Ask before closing an app</string>
+    <string name="sec_network">Network</string>
+    <string name="set_network_default">Default network policy</string>
+    <string name="set_per_app_network">Per-app network overrides…</string>
+    <string name="per_app_empty">No overrides stored</string>
+    <string name="set_cleartext">Allow cleartext for localhost/emulator (developer)</string>
+    <string name="sec_webview">Runtime &amp; preview</string>
+    <string name="set_text_zoom">Text zoom: %1$d%%</string>
+    <string name="set_force_dark">Force dark rendering in apps</string>
+    <string name="set_safe_browsing">Safe Browsing</string>
+    <string name="set_webview_debug">WebView debugging (developer)</string>
+    <string name="set_direct_zip">Experimental: load ZIP directly, no extraction (developer)</string>
+    <string name="sec_appearance">Appearance</string>
+    <string name="set_theme">App theme</string>
+    <string name="set_layout">App list layout</string>
+    <string name="layout_grid">Grid</string>
+    <string name="layout_list">List</string>
+    <string name="sec_storage">Storage</string>
+    <string name="set_storage_installed">Installed archives: %1$s</string>
+    <string name="set_storage_appdata">App data: %1$s</string>
+    <string name="set_storage_temp">Temporary files: %1$s</string>
+    <string name="set_storage_projects">Developer projects: %1$s</string>
+    <string name="set_storage_cache">Cache: %1$s</string>
+    <string name="set_clean_temp">Clean temporary files now</string>
+    <string name="set_clear_cache">Clear cache</string>
+    <string name="storage_note">Installed archives and app data live in WAM\'s private storage (/data). Developer projects live in Android/data, which only WAM can browse; import and export use the system file picker.</string>
+    <string name="per_app_data_title">App data by app</string>
+    <string name="toast_temp_cleaned">Freed %1$s</string>
+    <string name="toast_cache_cleared">Cache cleared</string>
+    <string name="toast_sizes_computed">Storage sizes updated</string>
+    <string name="sec_dev">Developer</string>
+    <string name="set_dev_console">Show console overlay in preview</string>
+    <string name="set_dev_warnings">Show validation warnings</string>
+    <string name="set_log_level">Log level</string>
+    <string name="set_show_sessions">Show session directories…</string>
+    <string name="sessions_empty">No session directories present.</string>
+    <string name="sec_compat">WAP compatibility</string>
+    <string name="set_runtime_version">WAP runtime version: %1$d</string>
+    <string name="set_manifest_version">Supported manifestVersion: 1</string>
+    <string name="set_webview_pkg">WebView: %1$s</string>
+    <string name="set_feature_bridge">Restricted JS bridge: %1$s</string>
+    <string name="set_feature_docstart">Document-start JavaScript: %1$s</string>
+    <string name="feature_supported">supported</string>
+    <string name="feature_unsupported">not supported on this device</string>
+    <string name="set_limits">Limits: archive ≤ %1$d MiB · entries ≤ %2$d · data quota ≤ %3$d MiB</string>
+    <string name="sec_about">About</string>
+    <string name="menu_about">About</string>
+    <string name="set_about_version">Web Application Manager - v%1$s</string>
+    <string name="set_about_author">Author: iamtungingit (Made using GLM 5.3-Flash)</string>
+    <string name="set_about_github">GitHub: %1$s</string>
+    <string name="set_check_update">Check for update</string>
+    <string name="set_update_status_current">You are on v%1$s</string>
+    <string name="update_checking">Checking GitHub releases…</string>
+    <string name="update_check_failed">Could not check for updates: %1$s</string>
+    <string name="update_check_failed_short">Update check failed — are you online?</string>
+    <string name="update_available_title">Update available</string>
+    <string name="update_available_msg">A new version is available:\ninstalled: v%1$s\nlatest release: v%2$s\n\nOpen the GitHub release page to download it?</string>
+    <string name="update_available_status">Update available: v%1$s</string>
+    <string name="update_open_page">Open release page</string>
+    <string name="update_up_to_date">You are on the latest version</string>
+    <string name="update_no_browser">No browser app found to open the link</string>
+    
+    <!-- Per-app permission settings (v1.5.0 request #7) -->
+    <string name="app_settings_title">App settings</string>
+    <string name="app_settings_subtitle">Settings for %1$s (%2$s)</string>
+    <string name="app_settings_intro">Each installed app gets its own permissions. Everything is OFF by default — an app can only use a capability after you allow it here.</string>
+    <string name="app_settings_note">Internet uses the network policy above (Inherit follows Settings → Network). These permissions are enforced while the app runs in WAM’s built-in browser.</string>
+    <string name="app_perm_camera">Camera</string>
+    <string name="app_perm_camera_desc">Allow the app to request your camera while it runs (a system prompt still appears at request time).</string>
+    <string name="app_perm_mic">Voice recorder (microphone)</string>
+    <string name="app_perm_mic_desc">Allow the app to request your microphone while it runs (a system prompt still appears at request time).</string>
+    <string name="app_perm_tts">Text to speech</string>
+    <string name="app_perm_tts_desc">Allow the app to speak text through the WAP.tts bridge (WAP.tts.speak / WAP.tts.stop).</string>
+    <string name="app_perm_send_data">Requests to send data</string>
+    <string name="dangerous_asterisk"> *</string>
+    <string name="app_perm_send_data_desc">Allow the app to send data OUT to servers (POST / PUT uploads, form submissions). Off = read-only internet.</string>
+    <string name="app_perm_send_data_toggle">Allow sending data to servers</string>
+    <string name="app_perm_send_data_warning">* Dangerous: with this on, the app can upload personal info like photos or app data to a server.</string>
+    <string name="app_perm_send_data_confirm_title">Allow sending data?</string>
+    <string name="app_perm_send_data_confirm_msg">This is a dangerous permission: the app will be able to send your data (photos, app data, files) to a server. Only allow it for apps you trust.</string>
+    <string name="app_perm_internet">Internet</string>
+    <string name="app_perm_internet_desc">Network access policy for this app (same setting as Info → Needs internet).</string>
+
+    <!-- Official JS API (v1.6.0 user request #3) -->
+    <string name="sec_js_api">Official JS API</string>
+    <string name="set_js_api_summary">Apps with the data bridge enabled (manifest) can call window.WAP from JavaScript: WAP.camera.capture(), WAP.mic.record(), WAP.net.send(), WAP.tts.speak(), WAP.data.*, WAP.permissions.get(). Every call is gated by that app\'s toggles in App settings.</string>
+    <string name="set_open_js_api">JS API reference…</string>
+
+    <!-- Permission examples (v1.6.0 user request #4) -->
+    <string name="app_presets_title">Examples — tap to apply</string>
+    <string name="preset_camera_app">Camera app</string>
+    <string name="preset_voice_recorder">Voice recorder</string>
+    <string name="preset_tts_reader">Story reader</string>
+    <string name="preset_offline_game">Offline game</string>
+    <string name="preset_full_access">Full access *</string>
+    <string name="app_preset_applied">Permission example applied</string>
+    <string name="preset_full_confirm_msg">This applies ALL permissions, including the dangerous "requests to send data" — the app could upload photos or app data to a server. Apply?</string>
+
+    <!-- File manager extras (v1.6.0 user request #9: more controls) -->
+    <string name="action_sort">Sort</string>
+    <string name="sort_name_asc">Sorted by name (A→Z)</string>
+    <string name="sort_name_desc">Sorted by name (Z→A)</string>
+    <string name="sort_size_desc">Sorted by size (largest first)</string>
+    <string name="action_export_file">Export to device…</string>
+    <string name="export_file_done">Exported %1$s</string>
+
+    <!-- Guide = the OFFICIAL JS API reference (v1.6.0: docs must be useful —
+         "don't have useless docs"). Rendered by HelpActivity; plain text only. -->
+    <string name="guide_title">JS API &amp; help</string>
+    <string-array name="guide_titles">
+        <item>Quick start</item>
+        <item>The official JS API (window.WAP)</item>
+        <item>WAP.data — save and load files</item>
+        <item>WAP.tts — speak text</item>
+        <item>WAP.camera — take a photo</item>
+        <item>WAP.mic — record your voice</item>
+        <item>WAP.net.send — send data to a server (dangerous)</item>
+        <item>WAP.permissions — what may this app do?</item>
+        <item>Permission examples</item>
+        <item>Troubleshooting</item>
+    </string-array>
+    <string-array name="guide_bodies">
+        <item>1) Projects tab → New project → edit files → Preview → Package &amp; install. 2) Apps tab → Import WAP to install a .wap file. Apps run in WAM\'s built-in browser. Every capability an app uses (camera, microphone, speech, sending data) is OFF until you allow it in Apps → long-press → App settings.</item>
+        <item>Apps whose manifest has "Enable data bridge" get a global object WAP. All methods return Promises and are gated by the app\'s permission toggles — a denied call rejects with a clear error (e.g. "camera_disabled"). Reference sections below show every method. Tip: call WAP.permissions.get() first and adapt the UI to what is allowed.</item>
+        <item>WAP.data.list() → names of saved files. WAP.data.writeText(name, text) / readText(name) / delete(name). WAP.data.writeJson(name, obj) / readJson(name). WAP.data.usage() → {bytes, files, quota}. Files persist between runs; Settings → Apps → Clear data wipes them. Example: await WAP.data.writeJson("highscore", {points: 42});</item>
+        <item>WAP.tts.speak("Hello!") speaks a text (up to 4000 chars); WAP.tts.stop() stops. Requires the Text-to-speech toggle. Example: button.onclick = async () => { await WAP.tts.speak("Ready player one"); };</item>
+        <item>WAP.camera.capture() opens the device camera app and saves a downscaled photo (max 1280 px JPEG) in the app\'s data. Resolves {name, bytes, url?}: for offline apps url is a ready-to-use relative path ("/.wam/cam-….jpg") you can put straight into an img src; otherwise read it back with WAP.data.readDataUrl(name) (≤ 1 MB). Requires the Camera toggle. Example: const photo = await WAP.camera.capture();</item>
+        <item>WAP.mic.record({seconds}) records microphone audio (AAC .m4a, 1–30 s, default 10) and resolves {name, bytes, url?} exactly like the camera; WAP.mic.stop() stops early. Android\'s "allow microphone" prompt appears at first use. Requires the Voice recorder toggle.</item>
+        <item>WAP.net.send(url, {method:"POST", headers:{…}, body:"…", base64:false}) sends data to a server and resolves {status, ok, contentType, body, base64}. Methods: POST/PUT/PATCH. https only (http is allowed just for localhost). This is the DANGEROUS "requests to send data" permission (red asterisk): with it ON the app can upload personal info like photos to a server; OFF it always rejects with "send_data_disabled".</item>
+        <item>WAP.permissions.get() resolves {camera, mic, tts, sendData, network} — the current grants for THIS app. Use it to show/hide features: const p = await WAP.permissions.get(); if (!p.camera) hideShotButton();</item>
+        <item>In Apps → long-press → App settings, the Examples row applies realistic presets: Camera app (camera only), Voice recorder (mic only), Story reader (text-to-speech), Offline game (nothing), Full access * (everything — asks extra confirmation because it includes the dangerous send-data permission).</item>
+        <item>Black screen: WAM now shows a real error screen with the address and a console log instead, and auto-recovers a GPU black frame with software rendering; you can also switch Settings → Preview engine to "Open in device browser". Packaging failed: the dialog shows the full error — usually the manifest entry does not match a file in the archive. Widgets: fixed 1×1 app icons; remove and re-add if one was placed with an old version.</item>
+    </string-array>
+</resources>
